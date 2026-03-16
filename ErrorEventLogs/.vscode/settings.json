@@ -1,0 +1,6 @@
+{
+  "python.analysis.extraPaths": [
+    "C:\\Program Files\\Autopsy-4.22.1\\autopsy\\Core"
+  ],
+  "python.pythonPath": "java -jar C:\\Users\\Oscar\\Documents\\jython-standalone-2.7.4.jar"
+}
