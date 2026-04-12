@@ -1,0 +1,13 @@
+ {
+    "rule_title": "TTP 1136.001 - SAM Backdating via Silent Regedit Import",
+    "description": "Detects silent registry import via regedit /s used to manipulate SAM account metadata (e.g. backdating password timestamps to make accounts appear old and legitimate). A randomly named .reg file with /s suppresses all UI prompts. This is the final step in the CreateHiddenAccount toolkit's evasion chain.",
+    "logic": "AND",
+    "severity": "high",
+    "detection": [
+      { "field": "EventID", "op": "eq", "value": "4688" },
+      { "field": "Channel", "op": "eq", "value": "Security" },
+      { "field": "ED_NewProcessName", "op": "endswith", "value": "\\regedit.exe" },
+      { "field": "ED_CommandLine", "op": "contains", "value": "/s" },
+      { "field": "ED_CommandLine", "op": "endswith", "value": ".reg" }
+    ]
+  }

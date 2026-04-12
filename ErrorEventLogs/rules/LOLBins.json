@@ -1,0 +1,27 @@
+{
+    "rule_title": "TTP 1218 - Living Off the Land Binary (LOLBin) Remote Execution",
+    "description": "Detects abuse of trusted Windows binaries to download or execute remote content, bypassing application whitelisting. Covers the most commonly abused LOLBins across malware families.",
+    "logic": "AND",
+    "severity": "high",
+    "detection": [
+      { "field": "EventID", "op": "eq", "value": "4688" },
+      { "field": "Channel", "op": "eq", "value": "Security" },
+      { "field": "ED_NewProcessName", "op": "in", "value": [
+          "\\mshta.exe",
+          "\\rundll32.exe",
+          "\\regsvr32.exe",
+          "\\certutil.exe",
+          "\\bitsadmin.exe",
+          "\\wscript.exe",
+          "\\cscript.exe"
+        ]
+      },
+      { "field": "ED_CommandLine", "op": "contains_any", "value": [
+          "http://",
+          "https://",
+          "ftp://",
+          "\\\\"
+        ]
+      }
+    ]
+}

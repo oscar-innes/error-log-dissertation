@@ -1,0 +1,12 @@
+{
+    "rule_title": "TTP 1547.010 - DNS Server Plugin DLL Registry Key Written",
+    "description": "Detects the ServerLevelPluginDll registry value being written directly, covering cases where the DLL path is registered via registry write rather than dnscmd. Any value written to this key that points outside System32 is malicious — the DNS server has no legitimate reason to load plugin DLLs from non-system paths.",
+    "logic": "AND",
+    "severity": "medium",
+    "detection": [
+      { "field": "EventID", "op": "eq", "value": "4657" },
+      { "field": "Channel", "op": "eq", "value": "Security" },
+      { "field": "ED_ObjectName", "op": "contains", "value": "\\Services\\DNS\\Parameters" },
+      { "field": "ED_ObjectValueName", "op": "eq", "value": "ServerLevelPluginDll" }
+    ]
+  }

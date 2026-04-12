@@ -1,0 +1,16 @@
+{
+    "rule_title": "TTP T1546.008 - cmd.exe spawned by winlogon.exe with sethc.exe argument",
+    "description": "Detects the sticky keys backdoor being triggered. winlogon.exe spawns cmd.exe with sethc.exe in the command line arguments — this happens when a user presses Shift 5 times at the login screen after the IFEO debugger or binary replacement backdoor has been planted. The process runs in the winlogon session context (SYSTEM).",
+    "logic": "AND",
+    "severity": "high",
+    "detection": [
+      { "field": "EventID", "op": "eq", "value": "1" },
+      { "field": "Channel", "op": "eq", "value": "Microsoft-Windows-Sysmon/Operational" },
+      { "field": "ED_EventType", "op": "eq", "value": "SetValue" },
+      { "field": "ED_ParentImage", "op": "contains", "value": "\\winlogon.exe" },
+      { "field": "ED_Image", "op": "endswith", "value": "\\cmd.exe" },
+      { "field": "ED_CommandLine", "op": "contains", "value": "sethc.exe" }
+    ]
+      }
+      
+ 

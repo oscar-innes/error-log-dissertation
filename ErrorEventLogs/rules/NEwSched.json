@@ -1,0 +1,10 @@
+{
+    "rule_title": "TTP 1053.005 - Scheduled Task Creation",
+    "description": "Detects creation of a new scheduled task via the Security log. Covers both interactive and programmatic creation. EID 4698 is the primary signal; EID 4702 covers modifications to existing tasks which attackers use to hijack legitimate task binaries.",
+    "logic": "AND",
+    "severity": "medium",
+    "detection": [
+      { "field": "EventID", "op": "in", "value": ["4698", "4702"] },
+      { "field": "Channel", "op": "eq", "value": "Security" }
+    ]
+  }

@@ -1,0 +1,17 @@
+ {
+    "rule_title": "TTP T1562.002 - Audit Policy Subcategory Disabled: Success or Failure Auditing Removed (EID 4719)",
+    "description": "Detects EID 4719 recording the removal of Success or Failure auditing from any subcategory. AuditPolicyChanges value %%8448 = Success auditing removed; %%8450 = Failure auditing removed. A single EID 4719 with either value means an audit subcategory has been silenced. This is the foundational detection for audit policy tampering — every downstream detection rule in this ruleset depends on the Security log events that EID 4719 suppressions eliminate. EID 4719 itself is logged before the subcategory is disabled, so this rule self-protects as long as the Audit Policy Change subcategory is still active when the suppression runs.",
+    "logic": "AND",
+      "severity": "critical",
+    "detection": [
+      { "field": "EventID", "op": "eq", "value": "4719" },
+      { "field": "Channel", "op": "eq", "value": "Security" },
+      { "field": "ED_AuditPolicyChanges", "op": "contains_any", "value": [
+          "%%8448",
+          "%%8450",
+          "Success removed",
+          "Failure removed"
+        ]
+      }
+    ]
+  }

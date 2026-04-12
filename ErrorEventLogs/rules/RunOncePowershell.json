@@ -1,0 +1,56 @@
+  {
+    "rule_title": "TTP 1547.001 - Registry Run/RunOnce Persistence via PowerShell (Masquerading)",
+    "description": "Detects writes to HKCU or HKLM Run/RunOnce registry keys via PowerShell Set-ItemProperty / New-ItemProperty / reg add where the value contains suspicious execution flags (hidden window, encoded command, cmd.exe pipes, download cradles). Frequently masquerades as legitimate Windows component names such as SecurityHealth, Updater, Defender, OneDrive. Requires PowerShell Script Block Logging (EID 4104) enabled.",
+    "logic": "AND",
+    "severity": "high",
+    "detection": [
+      {
+        "field": "EventID",
+        "op": "eq",
+        "value": "4104"
+      },
+      {
+        "field": "ED_ScriptBlockText",
+        "op": "contains_any",
+        "value": [
+          "Set-ItemProperty",
+          "New-ItemProperty",
+          "reg add",
+          "reg.exe add"
+        ]
+      },
+      {
+        "field": "ED_ScriptBlockText",
+        "op": "contains_any",
+        "value": [
+          "\\CurrentVersion\\Run",
+          "\\CurrentVersion\\RunOnce",
+          "Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+          "Software\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run",
+          "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+          "HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run"
+        ]
+      },
+      {
+        "field": "ED_ScriptBlockText",
+        "op": "contains_any",
+        "value": [
+          "-w hidden",
+          "-WindowStyle Hidden",
+          "-ep bypass",
+          "-ExecutionPolicy Bypass",
+          "-enc ",
+          "-EncodedCommand",
+          "cmd.exe /c",
+          "cmd /c",
+          "powershell.exe -",
+          "powershell -",
+          "IEX",
+          "Invoke-Expression",
+          "DownloadString",
+          "FromBase64String",
+          "Net.WebClient"
+        ]
+      }
+    ]
+  }

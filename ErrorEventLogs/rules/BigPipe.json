@@ -1,0 +1,30 @@
+{
+  "rule_title": "TTP 1021.002 - Massive Remote Service Access via Named Pipe (svcctl)",
+  "description": "Detects a high volume of remote accesses to the Service Control Manager named pipe (svcctl) over IPC$ from a single source in a short window. Each access generates a unique logon session, indicating automated/scripted remote service manipulation consistent with lateral movement tools such as Impacket services.py or similar frameworks.",
+  "logic": "AND",
+    "severity": "high",
+  "threshold": 20,
+  "window_seconds": 60,
+  "detection": [
+    {
+      "field": "EventID",
+      "op": "eq",
+      "value": "5145"
+    },
+    {
+      "field": "Channel",
+      "op": "eq",
+      "value": "Security"
+    },
+    {
+      "field": "ED_RelativeTargetName",
+      "op": "eq",
+      "value": "svcctl"
+    },
+    {
+      "field": "ED_AccessMask",
+      "op": "eq",
+      "value": "0x0012019f"
+    }
+  ]
+}

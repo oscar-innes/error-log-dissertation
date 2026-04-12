@@ -1,0 +1,34 @@
+  {
+    "rule_title": "TTP T1003.002 - DAMP: WMI ACE and Trustee Object Creation in PowerShell",
+    "description": "Detects PowerShell creating WMI win32_Ace and win32_Trustee management class instances, used by DAMP to construct Access Control Entries granting ALL_ACCESS (983103) on sensitive registry keys.",
+    "severity": "high",
+    "logic": "AND",
+    "detection": [
+      {
+        "field": "EventID",
+        "op": "eq",
+        "value": "800"
+      },
+      {
+        "field": "Channel",
+        "op": "eq",
+        "value": "Windows PowerShell"
+      },
+      {
+        "field": "ED_unnamed",
+        "op": "contains_any",
+        "value": [
+          "win32_Ace",
+          "StdRegProv"
+        ]
+      },
+      {
+        "field": "ED_unnamed",
+        "op": "contains_any",
+        "value": [
+          "win32_Trustee",
+          "SetSecurityDescriptor"
+        ]
+      }
+    ]
+  }

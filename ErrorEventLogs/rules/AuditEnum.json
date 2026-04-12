@@ -1,0 +1,12 @@
+  {
+    "rule_title": "TTP 1518.001 - Audit Policy Enumerated via auditpol",
+    "description": "Detects use of auditpol /get to read the current audit policy configuration. Attackers enumerate audit policy to identify which event categories are enabled before performing further actions — knowing what is and isn't being logged directly informs their evasion approach.",
+    "logic": "AND",
+      "severity": "high",
+    "detection": [
+      { "field": "EventID", "op": "eq", "value": "4688" },
+      { "field": "Channel", "op": "eq", "value": "Security" },
+      { "field": "ED_NewProcessName", "op": "endswith", "value": "\\auditpol.exe" },
+      { "field": "ED_CommandLine", "op": "contains", "value": "/get" }
+    ]
+  }

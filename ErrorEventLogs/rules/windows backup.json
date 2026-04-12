@@ -1,0 +1,28 @@
+{
+    "rule_title": "Windows Backup Catalog deletion",
+    "description": "Detects deletion of windows backup catalog through wbadmin",
+    "logic": "AND",
+    "severity": "critical",
+    "detection": [
+      {
+        "field": "EventID",
+        "op": "eq",
+        "value": "4688"
+      },
+      {
+        "field": "ED_NewProcessName",
+        "op": "eq",
+        "value": "C:\\Windows\\System32\\wbadmin.exe"
+      },
+      {
+        "field": "ED_CommandLine",
+        "op": "contains",
+        "value": "wbadmin delete"
+      },
+      {
+        "field": "Channel",
+        "op": "eq",
+        "value": "Security"
+      }
+    ]
+}

@@ -1,0 +1,12 @@
+{
+    "rule_title": "TTP 1003.006 - DCSync Preparation and Execution",
+    "description": "Detects a user being added to a high-privilege group followed by a directory replication request.",
+    "logic": "AND",
+    "severity": "high",
+     
+    "detection": [
+          { "field": "EventID", "op": "eq", "value": "4756" },
+          { "field": "ED_GroupName", "op": "contains", "value": "Exchange" }
+        
+         ]
+      }

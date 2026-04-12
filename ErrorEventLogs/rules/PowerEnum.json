@@ -1,0 +1,23 @@
+{
+    "rule_title": "T1087.001/T1069.001 - WMI-Based Local User and Group Discovery",
+    "description": "Detects use of Get-WmiObject to enumerate local user accounts, groups, and domain role via Win32_UserAccount, Win32_Group, and Win32_ComputerSystem. Standard post-access discovery pattern executed in sequence.",
+    "severity": "medium",
+    "logic": "AND",
+    "detection": [
+      {
+        "field": "EventID",
+        "op": "eq",
+        "value": "4104"
+      },
+      {
+        "field": "ED_ScriptBlockText",
+        "op": "regex",
+        "value": "(?i)Get-WmiObject"
+      },
+      {
+        "field": "ED_ScriptBlockText",
+        "op": "regex",
+        "value": "(?i)(Win32_UserAccount|Win32_Group|Win32_ComputerSystem|Win32_Product)"
+      }
+    ]
+  }

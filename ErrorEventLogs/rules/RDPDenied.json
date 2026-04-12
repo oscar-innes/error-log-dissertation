@@ -1,0 +1,11 @@
+{
+    "rule_title": "Unsuccessful RDP logon detected",
+    "description": "A unsuccessful RDP logon has been detected - lateral movement attempt if unexpected",
+    "logic": "AND", 
+    "severity": "high",
+    "detection": [
+        { "field": "EventID", "op": "eq", "value": "4825" },
+        { "field": "Channel", "op": "eq", "value": "Security" },
+        { "field": "Provider_Name", "op": "eq", "value": "Microsoft-Windows-Security-Auditing" }
+    ]
+}

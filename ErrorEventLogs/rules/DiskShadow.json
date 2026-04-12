@@ -1,0 +1,11 @@
+{
+    "rule_title": "TTP 1003.003 - NTDS.dit Extraction via Diskshadow",
+    "description": "Detects diskshadow.exe being used to create shadow copies, often a precursor to AD database theft.",
+    "logic": "AND",
+    "severity": "medium",
+    "detection": [
+      { "field": "EventID", "op": "eq", "value": "4688" },
+      { "field": "ED_NewProcessName", "op": "endswith", "value": "\\diskshadow.exe" },
+      { "field": "ED_CommandLine", "op": "contains", "value": "/s" }
+    ]
+}

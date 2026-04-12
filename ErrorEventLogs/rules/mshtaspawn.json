@@ -1,0 +1,12 @@
+{
+"rule_title": "TTP 1112 - Kovter Registry Shell Execution",
+  "description": "Detects mshta.exe being used to execute scripts hidden in the registry, a classic Kovter persistence technique.",
+  "severity": "high",
+  "logic": "AND",
+  "detection": [
+    { "field": "EventID", "op": "eq", "value": "4688" },
+    { "field": "ED_NewProcessName", "op": "endswith", "value": "\\mshta.exe" },
+    { "field": "ED_CommandLine", "op": "contains", "value": "javascript" }
+
+  ]
+}

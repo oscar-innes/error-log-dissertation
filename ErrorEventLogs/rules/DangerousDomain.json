@@ -1,0 +1,23 @@
+{
+  "rule_title": "TTP 1098 - Member Added to Sensitive Domain Group",
+  "description": "Detects any account being added to a tier-0 or otherwise sensitive domain group. Covers both global (EID 4728) and universal (EID 4756) security group additions. Target group is identified by well-known RID suffix rather than group name to resist group rename evasion. Includes Domain Admins (512), Enterprise Admins (519), Schema Admins (518), Enterprise Key Admins (527), Administrators (544), Account Operators (548), Backup Operators (551), Print Operators (550), Server Operators (549), Group Policy Creator Owners (520), and DNS Admins (1101 — variable RID, matched by name).",
+  "logic": "AND",
+    "severity": "medium",
+  "detection": [
+    { "field": "EventID", "op": "in", "value": ["4728", "4756", "4732"] },
+    { "field": "Channel", "op": "eq", "value": "Security" },
+    { "field": "ED_TargetSid", "op": "endswith_any", "value": [
+        "-512",
+        "-518",
+        "-519",
+        "-520",
+        "-527",
+        "-544",
+        "-548",
+        "-549",
+        "-550",
+        "-551"
+      ]
+    }
+  ]
+}

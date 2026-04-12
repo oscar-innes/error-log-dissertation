@@ -1,0 +1,10 @@
+ {
+    "rule_title": "TTP 1590.002 - DNS Zone Transfer Attempt (EID 6004)",
+    "description": "Detects a failed DNS zone transfer request logged by the DNS Server. EID 6004 fires when a client requests a zone transfer (AXFR/IXFR) but is not an authorised secondary server. param1 is the source IP, param2 is the zone name requested. Any non-DC IP attempting a zone transfer is high fidelity — successful transfers would yield a complete map of all internal DNS records.",
+    "logic": "AND",
+    "severity": "medium",
+    "detection": [
+      { "field": "EventID", "op": "eq", "value": "6004" },
+      { "field": "Channel", "op": "eq", "value": "DNS Server" }
+    ]
+}

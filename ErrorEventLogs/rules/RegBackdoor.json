@@ -1,0 +1,23 @@
+  {
+    "rule_title": "TTP T1003.002 - DAMP: Add-RemoteRegBackdoor ScriptBlock Execution",
+    "description": "Detects PowerShell ScriptBlock logging capturing execution of the Add-RemoteRegBackdoor function, used by DAMP to modify registry DACLs on remote hosts for credential dumping.",
+    "severity": "critical",
+    "logic": "AND",
+    "detection": [
+      {
+        "field": "EventID",
+        "op": "eq",
+        "value": "4104"
+      },
+      {
+        "field": "Channel",
+        "op": "eq",
+        "value": "Microsoft-Windows-PowerShell/Operational"
+      },
+      {
+        "field": "ED_ScriptBlockText",
+        "op": "contains",
+        "value": "Add-RemoteRegBackdoor"
+      }
+    ]
+  }

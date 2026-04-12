@@ -1,0 +1,17 @@
+
+  {
+    "rule_title": "TTP 1484.002 - DCShadow: SAM Domain Structure Access by DC Machine Account Without SAM_USER Events",
+    "description": "Detects the DCShadow attack pattern: a burst of EID 4661 events accessing SAM_SERVER and SAM_DOMAIN objects attributed to the local DC machine account (SubjectUserSid S-1-5-18 / SYSTEM), without any accompanying SAM_USER events. Normal domain controller SAM operations by SYSTEM access domain structures transiently. DCShadow's lsadump::dcshadow uses these structures to inject forged replication data — the absence of SAM_USER events with the presence of SAM_DOMAIN bursts is the distinguishing characteristic versus lsadump::sam.",
+    "logic": "AND",
+      "severity": "critical",
+    "threshold": 5,
+    "window_seconds": 30,
+    "detection": [
+      { "field": "EventID", "op": "eq", "value": "4661" },
+      { "field": "Channel", "op": "eq", "value": "Security" },
+      { "field": "ED_ObjectServer", "op": "eq", "value": "Security Account Manager" },
+      { "field": "ED_ObjectType", "op": "in", "value": ["SAM_SERVER", "SAM_DOMAIN"] },
+      { "field": "ED_SubjectUserSid", "op": "eq", "value": "S-1-5-18" },
+      { "field": "ED_ProcessName", "op": "eq", "value": "C:\\Windows\\System32\\lsass.exe" }
+    ]
+  }

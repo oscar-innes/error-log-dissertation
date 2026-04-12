@@ -1,0 +1,18 @@
+{
+    "rule_title": "TTP 1547.010 - Print Spooler Port Abuse - DLL Path Registered as Printer Port",
+    "description": "Broader variant covering Add-PrinterPort with any suspicious Name value — relative paths (.\\), UNC paths (\\\\), or explicit DLL extensions. Legitimate printer port names are always TCP/IP addresses, hostnames, or standard port identifiers like COM1, LPT1. A DLL path or relative path as the Name parameter is unambiguously malicious.",
+    "logic": "AND",
+    "severity": "high",
+    "detection": [
+      { "field": "EventID", "op": "eq", "value": "4104" },
+      { "field": "Channel", "op": "eq", "value": "Microsoft-Windows-PowerShell/Operational" },
+      { "field": "ED_ScriptBlockText", "op": "contains", "value": "Add-PrinterPort" },
+      { "field": "ED_ScriptBlockText", "op": "contains_any", "value": [
+          ".dll",
+          ".exe",
+          ".\\",
+          "\\\\"
+        ]
+      }
+    ]
+  }

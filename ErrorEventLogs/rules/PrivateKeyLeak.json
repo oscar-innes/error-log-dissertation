@@ -1,0 +1,12 @@
+{
+    "rule_title": "TTP 1003 - Private Key Accessed via CAPI2 (Mimikatz crypto Module)",
+    "description": "Detects private key access events via the CAPI2 Operational channel (EID 70). This event fires whenever a private key stored in the Windows certificate store is accessed or exported. Mimikatz's 'crypto' module (crypto::capi, crypto::cng) uses this to export private keys from the machine store. Multiple EID 70 events in rapid succession from a non-standard context indicates automated key extraction rather than a legitimate TLS operation or code signing.",
+    "logic": "AND",
+    "severity": "medium",
+    "threshold": 2,
+    "window_seconds": 30,
+    "detection": [
+      { "field": "EventID", "op": "eq", "value": "70" },
+      { "field": "Channel", "op": "eq", "value": "Microsoft-Windows-CAPI2/Operational" }
+    ]
+  }

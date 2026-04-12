@@ -1,0 +1,11 @@
+{
+    "rule_title": "TTP 1078.003 - Guest Account Enabled",
+    "description": "Detects the built-in Guest account being enabled via EID 4722. The Guest account (SID suffix -501) is disabled by default and enabling it provides unauthenticated or low-credential access to the host. High fidelity — there is almost no legitimate reason to enable the Guest account in a managed environment.",
+    "logic": "AND",
+    "severity": "low",
+    "detection": [
+      { "field": "EventID", "op": "eq", "value": "4722" },
+      { "field": "Channel", "op": "eq", "value": "Security" },
+      { "field": "ED_TargetUserName", "op": "eq", "value": "Guest" }
+    ]
+  }

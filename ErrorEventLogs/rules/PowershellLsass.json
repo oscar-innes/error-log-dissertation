@@ -1,0 +1,29 @@
+  {
+    "rule_title": "T1003.001 - PowerShell LSASS Handle Acquisition",
+    "description": "Detects PowerShell being used to obtain a handle to the lsass.exe process, a common first step in credential dumping via Mimikatz, procdump, comsvcs.dll MiniDump, nanodump and similar tools.",
+    "severity": "high",
+    "logic": "AND",
+    "detection": [
+      {
+        "field": "EventID",
+        "op": "eq",
+        "value": "4688"
+      },
+      {
+        "field": "ED_CommandLine",
+        "op": "contains",
+        "value": "lsass"
+      },
+      {
+        "field": "ED_CommandLine",
+        "op": "contains_any",
+        "value": [
+          "GetProcessesByName",
+          "Get-Process",
+          ".Handle",
+          "OpenProcess",
+          "MiniDumpWriteDump"
+        ]
+      }
+    ]
+  }

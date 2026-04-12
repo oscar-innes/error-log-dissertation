@@ -1,0 +1,17 @@
+{
+    "rule_title": "TTP 1518.001 - Firewall Configuration Enumerated via netsh",
+    "description": "Detects use of netsh to enumerate Windows Firewall profile configuration across all profiles. Both the full form (advfirewall show allprofiles) and the abbreviated form (a show allprofiles) are observed in the evidence. Attackers run this to understand whether outbound connections will be blocked before attempting C2 or exfiltration.",
+    "logic": "AND",
+    "severity": "medium",
+    "detection": [
+      { "field": "EventID", "op": "eq", "value": "4688" },
+      { "field": "Channel", "op": "eq", "value": "Security" },
+      { "field": "ED_NewProcessName", "op": "endswith", "value": "\\netsh.exe" },
+      { "field": "ED_CommandLine", "op": "contains_any", "value": [
+          "advfirewall show",
+          "advfirewall dump",
+          "a show allprofiles"
+        ]
+      }
+    ]
+  }

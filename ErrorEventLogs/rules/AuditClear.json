@@ -1,0 +1,13 @@
+{
+    "rule_title": "TTP for audit policy clearance attempts",
+    "description": "Detects automated local account password brute forcing via the Windows Advapi LogonType 2 interface. Legitimate interactive logon failures (EID 4625 LogonType 2) come exclusively from winlogon.exe — any other ProcessName in the 4625 event indicates a tool is calling LogonUser() or similar APIs to test passwords locally without the Windows GUI. AccountRestore, NirSoft tools, and custom brute-force scripts all leave this signature. SubStatus 0xc000006a confirms wrong password rather than locked/disabled.",
+    "logic": "AND",
+    "detection": [
+      { "field": "EventID", "op": "eq", "value": "4688" },
+      { "field": "Channel", "op": "eq", "value": "Security" },
+      { "field": "ED_NewProcessName", "op": "contains", "value": "\\Windows\\System32\\auditpol.exe" },
+      { "field": "ED_ProcessName", "op": "contains_any", "value": ["/clear", "/clearall", "/clear /y", "/success:disable", "/failure:disable", "/set"] }
+    ]
+      }
+
+

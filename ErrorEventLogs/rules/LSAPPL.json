@@ -1,0 +1,13 @@
+{
+    "rule_title": "TTP 1547.008 - LSA RunAsPPL Protection Enabled or Modified",
+    "description": "Detects modification of the LSA RunAsPPL registry value via Sysmon registry events. Enabling PPL (Protected Process Light) on LSA prevents credential dumping tools from accessing lsass.exe. Attackers may disable it before credential access attempts. Either enabling (attacker removing protection) or disabling (hardening bypass) warrants investigation.",
+    "logic": "AND",
+    "severity": "medium",
+    "detection": [
+      { "field": "EventID", "op": "in", "value": ["12", "13", "14"] },
+      { "field": "Channel", "op": "eq", "value": "Microsoft-Windows-Sysmon/Operational" },
+      { "field": "ED_TargetObject", "op": "contains", "value": "\\SYSTEM\\CurrentControlSet\\Control\\Lsa" },
+      { "field": "ED_TargetObject", "op": "in", "value": ["RunAsPPL", "RunAsPPLBoot"] }
+    ]
+
+  }

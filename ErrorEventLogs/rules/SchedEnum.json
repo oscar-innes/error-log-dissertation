@@ -1,0 +1,12 @@
+{
+    "rule_title": "TTP 1053.005 - Scheduled Task Enumeration via schtasks",
+    "description": "Detects enumeration of scheduled tasks using schtasks /query, used by attackers to identify existing tasks for hijacking, understand the environment, or locate privileged execution paths. The /fo LIST or /fo CSV flags dump detailed task configuration including run-as accounts.",
+    "logic": "AND",
+    "severity": "medium",
+    "detection": [
+      { "field": "EventID", "op": "eq", "value": "4688" },
+      { "field": "Channel", "op": "eq", "value": "Security" },
+      { "field": "ED_NewProcessName", "op": "endswith", "value": "\\schtasks.exe" },
+      { "field": "ED_CommandLine", "op": "contains", "value": "/query" }
+    ]
+}

@@ -1,0 +1,11 @@
+{
+    "rule_title": "TTP 1197 - BITS Large File Transfer (Exfiltration or Payload Download)",
+    "description": "Detects BITS transfers involving large files via the BITS Operational log. EID 59 fires when a transfer URL is resolved and contains the remote URL and total file size. EID 60 fires on completion or interruption with bytes transferred. Files over 100MB downloaded via BITS to non-standard paths warrant investigation.",
+    "logic": "AND",
+      "severity": "medium",
+    "detection": [
+      { "field": "EventID", "op": "in", "value": ["59", "60"] },
+      { "field": "Channel", "op": "eq", "value": "Microsoft-Windows-Bits-Client/Operational" },
+      { "field": "ED_fileLength", "op": "gt", "value": "104857600" }
+    ]
+  }

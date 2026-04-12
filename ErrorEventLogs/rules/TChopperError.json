@@ -1,0 +1,22 @@
+{
+    "rule_title": "TTP 1543.003 - Segmented Service Payload Execution Chain",
+    "description": "Correlates the creation of a suspicious PowerShell service with an immediate service start failure.",
+    "logic": "AND",
+    "severity": "high",
+    "threshold": 1,
+    "window_seconds": 60,
+    "detection": [
+          { "field": "EventID", "op": "eq", "value": "7045" },
+          { "field": "ED_ImagePath", "op": "in", "value": ["powershell", "cmd"] },
+          { "field": "ED_ImagePath", "op": "contains", "value": "out-file -append" }
+    ],
+    "steps": [
+      {
+        "step": 1,
+        "detection": [
+          { "field": "EventID", "op": "eq", "value": "7000" },
+          { "field": "Channel", "op": "eq", "value": "System" }
+        ]
+      }
+    ]
+}

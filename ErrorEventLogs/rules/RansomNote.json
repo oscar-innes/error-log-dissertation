@@ -1,0 +1,34 @@
+{
+  "rule_title": "TTP 1486 - Ransomware Note File Created on Disk",
+  "description": "Detects creation of files matching common ransomware note naming conventions across major families. Ransom notes are written to disk after encryption completes and use predictable names. Requires Sysmon EID 11 with file create logging enabled.",
+  "logic": "AND",
+  "severity": "high",
+  "detection": [
+    { "field": "EventID", "op": "eq", "value": "11" },
+    { "field": "Channel", "op": "eq", "value": "Microsoft-Windows-Sysmon/Operational" },
+    { "field": "ED_TargetFilename", "op": "containy_any", "value": [
+        "README_FOR_DECRYPT",
+        "HOW_TO_DECRYPT",
+        "HOW_TO_RECOVER",
+        "DECRYPT_INSTRUCTION",
+        "RESTORE_FILES",
+        "YOUR_FILES_ARE_ENCRYPTED",
+        "RECOVERY_FILES",
+        "READ_ME_TO_DECRYPT",
+        "!!!HOW_TO_DECRYPT",
+        "RANSOM_NOTE",
+        "Decryptor",
+        "@Please_Read_Me@",
+        "WNCRY_NOTE",
+        "FILES_ENCRYPTED",
+        "HELP_DECRYPT",
+        "HELP_RESTORE",
+        "DECRYPT_FILES",
+        "Ransom",
+        "HOW_TO_UNLOCK",
+        "README_DECRYPT",
+        "R_E_A_D"
+      ]
+    }
+  ]
+}

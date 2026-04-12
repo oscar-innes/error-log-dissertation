@@ -1,0 +1,19 @@
+ {
+    "rule_title": "TTP 1003.001 - LSASS Dump via comsvcs.dll MiniDump (Lsassy / LOLBin)",
+    "description": "Detects the comsvcs.dll MiniDump technique used by Lsassy and other tools to dump lsass memory without a dedicated external binary. The pattern is: powershell.exe launching rundll32.exe to call comsvcs.dll MiniDump against lsass, writing the dump to a temp path. This technique is a LOLBin (Living Off the Land Binary) approach — it uses only Windows-signed binaries, making it harder to detect via process image blocklisting. The combination of comsvcs.dll, MiniDump, and Get-Process lsass in the same command line is the high-fidelity indicator.",
+    "logic": "AND",
+    "detection": [
+      { "field": "EventID", "op": "in", "value": ["4104", "800"] },
+      { "field": "Channel", "op": "in", "value": [
+          "Microsoft-Windows-PowerShell/Operational",
+          "Windows PowerShell"
+        ]
+      },
+      { "field": "ED_ScriptBlockText", "op": "contains_any", "value": [
+          "comsvcs.dll",
+          "MiniDump"
+        ]
+      },
+      { "field": "ED_ScriptBlockText", "op": "contains", "value": "lsass" }
+    ]
+  }

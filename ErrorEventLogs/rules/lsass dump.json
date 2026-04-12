@@ -1,0 +1,24 @@
+{
+    "rule_title": "TTP 1003 - LSASS Memory Dump via Task Manager",
+    "description": "Detects credential dumping by identifying Task Manager creating a dump file of the LSASS process.",
+    "logic": "AND",
+    "severity": "high",
+    "threshold": 1,
+    "window_seconds": 30,
+    "detection": [
+      { "field": "Channel", "op": "eq", "value": "Security" },
+      { "field": "EventID", "op": "eq", "value": "4688" },
+      { "field": "ED_NewProcessName", "op": "endswith", "value": "\\taskmgr.exe" }
+    ],
+    "steps": [
+      {
+        "step": 1,
+        "detection": [
+          { "field": "EventID", "op": "eq", "value": "4656" },
+          { "field": "ED_ObjectName", "op": "contains", "value": "lsass.exe" },
+          { "field": "ED_AccessMask", "op": "eq", "value": "0x1fffff" }
+        ]
+      }
+    ]
+  }
+

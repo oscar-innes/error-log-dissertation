@@ -1,0 +1,20 @@
+{
+    "rule_title": "TTP 1543.003 - Encoded PowerShell Payload Deployed via Service Installation",
+    "description": "Detects a service installed with a ServiceFileName containing an encoded or compressed PowerShell payload — the Metasploit, Cobalt Strike, and custom stager pattern. Key indicators are -EncodedCommand/-enc, Base64 strings, GzipStream, or MemoryStream in the service binary path. Covers both EID 4697 (Security) and 7045 (System).",
+    "logic": "AND",
+    "severity": "medium",
+    "detection": [
+      { "field": "EventID", "op": "in", "value": ["4697", "7045"] },
+      { "field": "Channel", "op": "in", "value": ["Security", "System"] },
+      { "field": "ED_ServiceFileName", "op": "in", "value": [
+          "-EncodedCommand",
+          "-enc ",
+          "GzipStream",
+          "MemoryStream",
+          "FromBase64String",
+          "-nop -w hidden",
+          "-noni -nop -w hidden"
+        ]
+      }
+    ]
+  }

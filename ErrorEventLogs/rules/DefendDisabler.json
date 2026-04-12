@@ -1,0 +1,17 @@
+{
+    "rule_title": "TTP T1562.001 - Defender Exclusion Added via EID 5007 (Path, Process or Extension)",
+    "description": "Detects any addition to Windows Defender exclusion lists via the Defender Operational event EID 5007. When New Value is populated and Old Value is null the entry is being added; when Old Value is populated and New Value is null it is being removed. Attackers add exclusions to allow their tools (Mimikatz, RATs, persistence binaries) to run without being detected or quarantined. EID 5007 fires for changes made via PowerShell Add-MpPreference, direct registry writes, or Group Policy, making it the most reliable catch-all for Defender exclusion tampering regardless of method. All three exclusion types — Paths, Processes, and Extensions — are covered by a single rule on the New Value field.",
+    "logic": "AND",
+    "severity": "high",
+    "detection": [
+      { "field": "EventID", "op": "eq", "value": "5007" },
+      { "field": "Channel", "op": "eq", "value": "Microsoft-Windows-Windows Defender/Operational" },
+      { "field": "ED_New Value", "op": "contains_any", "value": [
+          "\\Exclusions\\Paths\\",
+          "\\Exclusions\\Processes\\",
+          "\\Exclusions\\Extensions\\",
+          "\\Exclusions\\IpAddresses\\"
+        ]
+      }
+    ]
+}

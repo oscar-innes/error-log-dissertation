@@ -1,0 +1,15 @@
+{
+  "rule_title": "TTP 1021.006 - WS-Management Listener Enumeration via EID 4656",
+  "description": "Detects handle requests against the WS-Management Listener object, indicating enumeration or access of WinRM listener configuration. AccessMask 0x7 (Read/Write/Execute) with a unique LogonId per request and no HandleId (0x0) is the fingerprint of automated WinRM listener enumeration, consistent with tools like CrackMapExec or custom WinRM implants. Observed: OFFSEC\\admmig enumerating WinRM listeners across win10-02, fs03vuln, and rootdc1 within 43 seconds.",
+  "logic": "AND",
+  "severity": "medium",
+  "threshold": 5,
+  "window_seconds": 60,
+  "detection": [
+    { "field": "EventID", "op": "eq", "value": "4656" },
+    { "field": "Channel", "op": "eq", "value": "Security" },
+    { "field": "ED_ObjectServer", "op": "eq", "value": "WS-Management Listener" },
+    { "field": "ED_AccessMask", "op": "eq", "value": "0x7" },
+    { "field": "ED_HandleId", "op": "eq", "value": "0x0" }
+  ]
+}

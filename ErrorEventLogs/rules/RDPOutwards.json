@@ -1,0 +1,11 @@
+{
+    "rule_title": "TTP 1021.001 - Outbound RDP Connection Initiated (EID 1024)",
+    "description": "Detects a device initiating an outbound RDP connection via the TerminalServices-RDPClient/Operational log. EID 1024 fires on the source machine when mstsc.exe or any RDP client attempts to connect to a remote host. Captures the destination hostname or IP in the event data.",
+    "logic": "AND",
+    "severity": "medium",
+    "detection": [
+      { "field": "EventID", "op": "in", "value": ["1024", "1102"] },
+      { "field": "Channel", "op": "eq", "value": "Microsoft-Windows-TerminalServices-RDPClient/Operational" }
+    ]
+  }
+ 

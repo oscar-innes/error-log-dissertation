@@ -1,0 +1,21 @@
+  {
+    "rule_title": "Reconnaissance command burst used",
+    "description": "Detects rapid execution of multiple reconnaissance commands (whoami, systeminfo, ipconfig, net user, hostname) from the same parent process within a short window. Classic post-execution discovery pattern for trojans.",
+    "severity": "medium",
+    "logic": "AND",
+    "detection": [
+      {
+        "field": "EventID",
+        "op": "in",
+        "value": [
+          "1",
+          "4688"
+        ]
+      },
+      {
+        "field": "ED_Image",
+        "op": "regex",
+        "value": ".*\\\\(whoami|systeminfo|ipconfig|hostname|net|nltest|arp|route|tasklist|netsh)\\.exe$"
+      }
+    ]
+  }

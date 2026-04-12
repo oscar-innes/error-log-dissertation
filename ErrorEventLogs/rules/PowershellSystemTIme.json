@@ -1,0 +1,16 @@
+{
+    "rule_title": "TTP T1070.006 - System Time Set via PowerShell (EID 4616)",
+    "description": "High-fidelity detection for clock manipulation via PowerShell — the method used in this sample. Set-Date, [System.DateTime], and the Win32 SetSystemTime API called from PowerShell all produce EID 4616 with ProcessName pointing to powershell.exe. No legitimate administrative workflow requires setting the system clock from PowerShell on a domain-joined machine where W32tm handles time synchronisation. A PowerShell process as the clock-changer is near-certain malicious intent.",
+    "logic": "AND",
+    "severity": "medium",
+    "detection": [
+      { "field": "EventID", "op": "eq", "value": "4616" },
+      { "field": "Channel", "op": "eq", "value": "Security" },
+      { "field": "ED_ProcessName", "op": "endswith_any", "value": [
+          "\\powershell.exe",
+          "\\pwsh.exe",
+          "\\cmd.exe"
+        ]
+      }
+    ]
+  }

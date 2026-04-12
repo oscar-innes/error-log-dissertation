@@ -1,0 +1,12 @@
+{
+    "rule_title": "TTP T1068 - PrintNightmare: spoolsv.exe spawns cmd.exe as SYSTEM",
+    "description": "Detects the Print Spooler service (spoolsv.exe) spawning cmd.exe running as NT AUTHORITY\\SYSTEM. The spooler should never spawn interactive shells — this is the hallmark of PrintNightmare (CVE-2021-1675 / CVE-2021-34527) exploitation. The observed event shows spoolsv.exe as parent, cmd.exe as child, running at System integrity level in a terminal session.",
+    "logic": "AND",
+      "severity": "high",
+    "detection": [
+      { "field": "EventID", "op": "eq", "value": "1" },
+      { "field": "Channel", "op": "eq", "value": "Microsoft-Windows-Sysmon/Operational" },
+      { "field": "ED_ParentImage", "op": "endswith", "value": "\\spoolsv.exe" },
+      { "field": "ED_Image", "op": "endswith", "value": "\\cmd.exe" }
+    ]
+  }

@@ -1,0 +1,47 @@
+
+  {
+    "rule_title": "TTP 1543.003 - New Service Persistence via PowerShell New-Service Cmdlet",
+    "description": "Detects creation of a new Windows service via the PowerShell New-Service cmdlet where the binary path invokes cmd.exe or powershell.exe, often with encoded commands or execution policy bypass flags. Commonly used for persistence while masquerading as a legitimate Windows service (e.g. 'Windows Health Service', 'SecurityHealthSvc'). Requires PowerShell Script Block Logging (EID 4104) enabled.",
+    "logic": "AND",
+    "severity": "high",
+    "detection": [
+      {
+        "field": "EventID",
+        "op": "eq",
+        "value": "4104"
+      },
+      {
+        "field": "ED_ScriptBlockText",
+        "op": "contains",
+        "value": "New-Service"
+      },
+      {
+        "field": "ED_ScriptBlockText",
+        "op": "contains_any",
+        "value": [
+          "-BinaryPathName",
+          "BinaryPathName"
+        ]
+      },
+      {
+        "field": "ED_ScriptBlockText",
+        "op": "contains_any",
+        "value": [
+          "cmd.exe",
+          "powershell.exe",
+          "powershell -",
+          "pwsh.exe",
+          "-enc",
+          "-EncodedCommand",
+          "-ep bypass",
+          "-ExecutionPolicy Bypass",
+          "-w hidden",
+          "-WindowStyle Hidden",
+          "IEX",
+          "Invoke-Expression",
+          "DownloadString",
+          "FromBase64String"
+        ]
+      }
+    ]
+  }

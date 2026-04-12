@@ -1,0 +1,25 @@
+{
+    "rule_title": "TTP 1547.010 - DNS Plugin DLL Registration Followed by DNS Service Restart",
+    "description": "Detects the full attack chain: dnscmd registering the plugin DLL followed by the DNS service being restarted to trigger DLL load. A DNS service restart immediately after a /serverlevelplugindll command is the confirmation that the attacker is executing the payload, not just staging it.",
+    "logic": "AND",
+    "severity": "medium",
+    "threshold": 1,
+    "window_seconds": 300,
+    "detection": [
+      { "field": "Channel", "op": "in", "value": ["Security", "System"] },
+          { "field": "EventID", "op": "eq", "value": "4688" },
+          { "field": "ED_NewProcessName", "op": "endswith", "value": "\\dnscmd.exe" },
+          { "field": "ED_CommandLine", "op": "contains", "value": "/serverlevelplugindll" }
+    ],
+    "steps": [
+      {
+       "step": 1,
+        "detection": [
+          { "field": "EventID", "op": "eq", "value": "7036" },
+          { "field": "Channel", "op": "eq", "value": "System" },
+          { "field": "ED_ServiceName", "op": "eq", "value": "DNS" }
+        ]
+      }
+    ]
+}
+  

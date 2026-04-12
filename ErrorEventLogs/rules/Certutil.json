@@ -1,0 +1,32 @@
+  {
+    "rule_title": "Certutil.exe Suspicious Command Line",
+    "description": "Detects suspicious command line DOWNLOAD arguments used with certutil.exe, which may indicate malicious activity.",
+    "severity": "high",
+    "logic": "AND",
+    "detection": [
+      {
+        "field": "EventID",
+        "op": "eq",
+        "value": "4688"
+      },
+      {
+        "field": "Channel",
+        "op": "eq",
+        "value": "Security"
+      },
+      {
+        "field": "ED_NewProcessName",
+        "op": "endswith",
+        "value": "\\certutil.exe"
+      },
+      {
+        "field": "ED_CommandLine",
+        "op": "contains_any",
+        "value": [
+          "-urlcache",
+            "-split",
+            "-f"
+        ]
+      }
+    ]
+  }

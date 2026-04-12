@@ -1,0 +1,23 @@
+  {
+    "rule_title": "T1055 - CreateRemoteThread injection into legitimate process",
+    "description": "Detects CreateRemoteThread (Sysmon Event 8) where the source process is from a user-writable directory and the target is a legitimate Windows process (svchost, explorer, lsass, services). This is the classic process injection pattern for trojans.",
+    "severity": "critical",
+    "logic": "AND",
+    "detection": [
+      {
+        "field": "EventID",
+        "op": "eq",
+        "value": "8"
+      },
+      {
+        "field": "ED_SourceImage",
+        "op": "regex",
+        "value": ".*\\\\(Users|Temp|AppData|ProgramData)\\\\.*\\.exe$"
+      },
+      {
+        "field": "ED_TargetImage",
+        "op": "regex",
+        "value": ".*\\\\(svchost|explorer|services|lsass|csrss|winlogon)\\.exe$"
+      }
+    ]
+  }

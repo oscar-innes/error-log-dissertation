@@ -1,0 +1,25 @@
+{
+    "rule_title": "TTP T1562.001 - Any Defender Kernel Driver Start Type Demoted via Registry (Sysmon EID 13)",
+    "description": "Broader detection covering any Defender kernel driver having its start type changed to manual or disabled. WdNisDrv (network inspection), WdFilter (main file system filter), WdBoot (boot-time scanner), and MpKsl (kernel scan library) are all Defender kernel components that can be individually crippled by changing their Start registry value. This rule catches targeted attacks on individual components that might otherwise appear as a single innocuous registry change. Written by any process other than a legitimate patch installer warrants immediate investigation.",
+    "logic": "AND",
+    "severity": "high",
+    "detection": [
+      { "field": "EventID", "op": "eq", "value": "13" },
+      { "field": "Channel", "op": "eq", "value": "Microsoft-Windows-Sysmon/Operational" },
+      { "field": "ED_TargetObject", "op": "contains_any", "value": [
+          "\\Services\\WdNisDrv\\Start",
+          "\\Services\\WdFilter\\Start",
+          "\\Services\\WdBoot\\Start",
+          "\\Services\\WinDefend\\Start",
+          "\\Services\\MpsSvc\\Start",
+          "\\Services\\Sense\\Start",
+          "\\Services\\MsSecFlt\\Start"
+        ]
+      },
+      { "field": "ED_Details", "op": "contains_any", "value": [
+          "0x00000003",
+          "0x00000004"
+        ]
+      }
+    ]
+  }

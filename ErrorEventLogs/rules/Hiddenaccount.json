@@ -1,0 +1,11 @@
+{
+    "rule_title": "TTP 1136.001 - Hidden Local Account Created (Dollar Suffix)",
+    "description": "Detects creation of a hidden local account using the dollar-sign suffix convention (e.g. backdoor$). Accounts ending with $ are omitted from net user output and most GUI user management tools, making them invisible to casual inspection. The 4720 TargetUserName ending in $ is the definitive signal regardless of the creation method.",
+    "logic": "AND",
+    "severity": "high",
+    "detection": [
+      { "field": "EventID", "op": "eq", "value": "4720" },
+      { "field": "Channel", "op": "eq", "value": "Security" },
+      { "field": "ED_TargetUserName", "op": "endswith", "value": "$" }
+    ]
+  }

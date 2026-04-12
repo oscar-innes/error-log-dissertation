@@ -1,0 +1,10 @@
+{
+    "rule_title": "Successful RDP logon detected",
+    "description": "A successful RDP logon has been detected - lateral movement if unexpected",
+    "logic": "AND", 
+    "severity": "medium",
+    "detection": [
+        { "field": "EventID", "op": "eq", "value": "4624" },
+        { "field": "ED_LogonType", "op": "eq", "value": "10" }
+    ]
+}

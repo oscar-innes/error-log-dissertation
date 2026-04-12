@@ -1,0 +1,12 @@
+{
+  "rule_title": "TTP 1059.001 - PowerShell Registry Read",
+  "description": "Detects PowerShell attempting to read and execute hidden environment variables or registry values often used by Kovter.",
+  "logic": "AND",
+  "severity": "medium",
+  "detection": [
+    { "field": "EventID", "op": "in", "value": ["4688", "4104"] },
+    { "field": "ED_CommandLine", "op": "contains", "value": "Get-ItemProperty" },
+    { "field": "ED_CommandLine", "op": "contains", "value": "-ExecutionPolicy Bypass" },
+    { "field": "ED_CommandLine", "op": "regex", "value": "IEX|Invoke-Expression" }
+  ]
+}

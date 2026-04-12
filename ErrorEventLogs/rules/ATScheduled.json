@@ -1,0 +1,33 @@
+{
+  "rule_title": "TTP — Interactive shell via AT scheduled task",
+  "description": "Detects use of at.exe to spawn an interactive shell (cmd.exe) via the /interactive flag, a technique used for privilege escalation or lateral movement on older Windows systems (MITRE T1053.002).",
+  "logic": "AND",
+    "severity": "high",
+  "detection": [
+    {
+      "field": "EventID",
+      "op": "eq",
+      "value": "4688"
+    },
+    {
+      "field": "Channel",
+      "op": "eq",
+      "value": "Security"
+    },
+    {
+      "field": "ED_NewProcessName",
+      "op": "endswith",
+      "value": "\\at.exe"
+    },
+    {
+      "field": "ED_CommandLine",
+      "op": "contains",
+      "value": "/interactive"
+    },
+    {
+      "field": "ED_CommandLine",
+      "op": "contains",
+      "value": "cmd"
+    }
+  ]
+}

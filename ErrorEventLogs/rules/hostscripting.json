@@ -1,0 +1,19 @@
+{
+    "rule_title": "TTP 1059.005 - Suspicious Scripting Host Execution",
+    "description": "Detects WSH (cscript/wscript) executing scripts from suspicious writable directories like Temp or Public.",
+    "logic": "AND",
+    "severity": "medium",
+    "detection": [
+      { "field": "EventID", "op": "eq", "value": "4688" },
+      {
+        "field": "ED_NewProcessName",
+        "op": "regex",
+        "value": "(cscript|wscript)\\.exe"
+      },
+      {
+        "field": "ED_CommandLine",
+        "op": "regex",
+        "value": "(Temp|Users\\\\Public|AppData)"
+      }
+    ]
+}

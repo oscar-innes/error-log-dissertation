@@ -1,0 +1,17 @@
+{
+    "rule_title": "TTP 1021.002 - Administrative Share Access Attempt (ADMIN$ or C$)",
+    "description": "Detects network access to administrative shares ADMIN$, C$, or other hidden admin shares via EID 5140. Legitimate admin share access is rare in most environments and should be limited to known management tools and service accounts. Access by standard user accounts or from unexpected source IPs is a strong lateral movement indicator.",
+    "logic": "AND",
+  "severity": "high",
+    "detection": [
+      { "field": "EventID", "op": "eq", "value": "5140" },
+      { "field": "Channel", "op": "eq", "value": "Security" },
+      { "field": "ED_ShareName", "op": "in", "value": [
+          "\\\\*\\ADMIN$",
+          "\\\\*\\C$",
+          "\\\\*\\D$",
+          "\\\\*\\E$"
+        ]
+      }
+    ]
+    }

@@ -1,0 +1,11 @@
+  {
+    "rule_title": "TTP 1021.002 - New File Share Created on Host",
+    "description": "Detects creation of a new network share via EID 5142. Attackers create shares to stage payloads, exfiltrate data, or enable further lateral movement. Shares created outside of known management tooling or on non-file-server hosts are high fidelity.",
+    "logic": "AND",
+    "severity": "low",
+    "detection": [
+      { "field": "EventID", "op": "eq", "value": "5142" },
+      { "field": "Channel", "op": "eq", "value": "Security" }
+    ]
+
+  }

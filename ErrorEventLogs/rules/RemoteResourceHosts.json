@@ -1,0 +1,17 @@
+{
+    "rule_title": "TTP 1565.001 - Remote Access to hosts File via Admin Share",
+    "description": "Detects remote access to the Windows hosts file via the C$ administrative share. The RelativeTargetName path traverses to Windows\\System32\\Drivers\\etc\\hosts, used by attackers to read existing DNS resolutions, add malicious redirects for credential theft, or enumerate internal naming conventions. The Zone.Identifier stream access confirms a direct file read rather than a directory listing.",
+    "logic": "AND",
+    "severity": "high",
+    "detection": [
+      { "field": "EventID", "op": "eq", "value": "5145" },
+      { "field": "Channel", "op": "eq", "value": "Security" },
+      { "field": "ED_ShareName", "op": "eq", "value": "\\\\*\\C$" },
+      { "field": "ED_RelativeTargetName", "op": "in", "value": [
+          "Drivers\\etc\\hosts",
+          "DRIVERS\\ETC\\hosts",
+          "drivers\\etc\\hosts"
+        ]
+      }
+    ]
+  }

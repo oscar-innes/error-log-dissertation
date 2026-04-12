@@ -1,0 +1,31 @@
+{
+    "rule_title": "TTP 1003.006 - DCSync Confirmed: Network Logon Burst Followed by Replication GUIDs (Step Rule)",
+    "description": "High-confidence DCSync step rule correlating the Mimikatz network authentication pattern with the replication GUID access. Mimikatz DCSync opens multiple rapid-fire Kerberos network logons (4624 LogonType 3) from the attacker IP before issuing replication requests — this burst of logons from a non-DC IP followed immediately by 4662 replication GUID access from the same LogonId is the definitive Mimikatz DCSync sequence.",
+    "logic": "AND",
+    "threshold": 1,
+    "window_seconds": 30,
+    "severity": "critical",
+    "detection": [
+      { "field": "Channel", "op": "eq", "value": "Security" },
+      { "field": "EventID", "op": "eq", "value": "4624" },
+      { "field": "ED_LogonType", "op": "eq", "value": "3" },
+      { "field": "ED_AuthenticationPackageName", "op": "eq", "value": "Kerberos" },
+      { "field": "ED_TargetUserName", "op": "not_endswith", "value": "$" },
+      { "field": "ED_IpAddress", "op": "not_contains_any", "value": ["::1", "127.0.0.1"] }
+    ],
+    "steps": [
+      {
+        "step": 1,
+        "detection": [
+          { "field": "ED_EventID", "op": "eq", "value": "4662" },
+          { "field": "ED_ObjectType", "op": "eq", "value": "%{19195a5b-6da0-11d0-afd3-00c04fd930c9}" },
+          { "field": "ED_Properties", "op": "contains_any", "value": [
+              "1131f6aa-9c07-11d1-f79f-00c04fc2dcd2",
+              "1131f6ab-9c07-11d1-f79f-00c04fc2dcd2",
+              "1131f6ad-9c07-11d1-f79f-00c04fc2dcd2"
+            ]
+          }
+        ]
+      }
+    ]
+  }

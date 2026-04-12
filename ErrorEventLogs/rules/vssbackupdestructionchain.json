@@ -1,0 +1,33 @@
+{ 
+    "rule_title": "TTP 1490 - Backup and Recovery Destruction Commands",
+    "description": "Detects the standard ransomware and destructive malware pre-encryption command set: shadow copy deletion, boot recovery disablement, and backup catalog removal. Consistent across WannaCry, REvil, LockBit, and most ransomware families.",
+    "logic": "OR",
+    "severity": "critical",
+    "detection": [
+      {
+        "detection": [
+          { "field": "EventID", "op": "in", "value": ["4688", "1"] },
+          { "field": "ED_Image", "op": "endswith", "value": "\\vssadmin.exe" },
+          { "field": "ED_CommandLine", "op": "contains", "value": "delete shadows" }
+        ]
+      },
+      {
+        "detection": [
+          { "field": "EventID", "op": "in", "value": ["4688", "1"] },
+          { "field": "ED_Image", "op": "endswith", "value": "\\wmic.exe" },
+          { "field": "ED_CommandLine", "op": "contains", "value": "shadowcopy delete" }
+        ]
+      },
+      {
+        "detection": [
+          { "field": "EventID", "op": "in", "value": ["4688", "1"] },
+          { "field": "ED_Image", "op": "endswith", "value": "\\bcdedit.exe" },
+          { "field": "ED_CommandLine", "op": "contains_any", "value": [
+              "recoveryenabled no",
+              "bootstatuspolicy ignoreallfailures"
+            ]
+          }
+        ]
+      }
+    ]
+}

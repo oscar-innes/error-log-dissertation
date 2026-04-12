@@ -1,0 +1,25 @@
+{
+    "rule_title": "MSSQL Brute Force Login Failure",
+    "description": "A failed database logon was detected on the MSSQL$RADAR instance.",
+    "logic": "AND",
+    "threshold": 10,
+    "window_seconds": 300,
+    "severity": "critical",
+    "detection": [
+      {
+        "field": "EventID",
+        "op": "eq",
+        "value": "33205"
+      },
+      {
+        "field": "Provider_Name",
+        "op": "eq",
+        "value": "MSSQL$RADAR"
+      },
+      {
+        "field": "ED_succeeded",
+        "op": "eq",
+        "value": "false"
+      }
+    ]
+}

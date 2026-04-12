@@ -1,0 +1,31 @@
+{
+  "rule_title": "TTP 1135 - Network Share Discovery via net view / net use",
+  "description": "Detects share enumeration and mapped drive listing via net.exe. net view enumerates shares visible on the network, net use lists currently mapped drives and connections. Both are standard attacker reconnaissance commands run post-compromise to identify accessible network resources. EID 4673 SeTcbPrivilege on net.exe confirms the use of net use specifically.",
+  "logic": "OR",
+  "severity": "medium",
+  "detection": [
+    {
+      "logic": "AND",
+      "detection": [
+        { "field": "EventID", "op": "eq", "value": "4688" },
+        { "field": "Channel", "op": "eq", "value": "Security" },
+        { "field": "ED_NewProcessName", "op": "endswith", "value": "\\net.exe" },
+        { "field": "ED_CommandLine", "op": "contains", "value": [
+            "view",
+            "use",
+            "share"
+          ]
+        }
+      ]
+    },
+    {
+      "logic": "AND",
+      "detection": [
+        { "field": "EventID", "op": "eq", "value": "4673" },
+        { "field": "Channel", "op": "eq", "value": "Security" },
+        { "field": "ED_ProcessName", "op": "endswith", "value": "\\net.exe" },
+        { "field": "ED_PrivilegeList", "op": "contains", "value": "SeTcbPrivilege" }
+      ]
+    }
+  ]
+}

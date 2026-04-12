@@ -1,0 +1,27 @@
+{
+    "rule_title": "TTP 1059.001 - Advanced PowerShell Fileless Execution",
+    "description": "Detects PowerShell using Gzip compression and Base64 decoding to execute memory-resident payloads.",
+    "logic": "AND",
+    "detection": [
+      {
+        "field": "EventID",
+        "op": "eq",
+        "value": "4688"
+      },
+      {
+        "field": "ED_NewProcessName",
+        "op": "contains",
+        "value": "powershell.exe"
+      },
+      {
+        "field": "ED_CommandLine",
+        "op": "contains",
+        "value": "FromBase64String"
+      },
+      {
+        "field": "ED_CommandLine",
+        "op": "contains",
+        "value": "GzipStream"
+      }
+    ]
+}

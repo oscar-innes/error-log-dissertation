@@ -1,0 +1,18 @@
+  {
+    "rule_title": "T1053.005 - Scheduled task with executable from user directory",
+    "description": "Detects creation of a scheduled task that runs an executable from a user-writable directory (AppData, Temp, ProgramData, Users\\Public). Common secondary persistence mechanism for trojans.",
+    "severity": "high",
+    "logic": "AND",
+    "detection": [
+      {
+        "field": "EventID",
+        "op": "eq",
+        "value": "4698"
+      },
+      {
+        "field": "ED_TaskContent",
+        "op": "regex",
+        "value": ".*\\\\(AppData|Temp|ProgramData|Users\\\\Public)\\\\.*\\.(exe|bat|vbs|ps1)"
+      }
+    ]
+  }

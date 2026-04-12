@@ -1,0 +1,33 @@
+{
+  "rule_title": "TTP 1558 - SPN Discovery and Kerberoasting Techniques",
+  "description": "Detects SPN enumeration and Kerberoasting across all observed delivery methods: setspn -Q for pre-attack SPN discovery, setspn -a/-s for registering new SPNs on target accounts, and PowerShell KerberosRequestorSecurityToken for native ticket requests. Covers EID 4688, Sysmon EID 1, EID 4104, and EID 800.",
+  "logic": "OR",
+  "severity": "high",
+  "detection": [
+    {
+      "detection": [
+        { "field": "EventID", "op": "in", "value": ["4688", "1"] },
+        { "field": "Image_or_NewProcessName", "op": "endswith", "value": "\\setspn.exe" },
+        { "field": "ED_CommandLine", "op": "in", "value": ["-Q", "-a ", "-s "] }
+      ]
+    },
+    {
+      "detection": [
+        { "field": "EventID", "op": "eq", "value": "4104" },
+        { "field": "Channel", "op": "eq", "value": "Microsoft-Windows-PowerShell/Operational" },
+        { "field": "ED_ScriptBlockText", "op": "in", "value": [
+            "KerberosRequestorSecurityToken",
+            "System.IdentityModel.Tokens.Kerberos"
+          ]
+        }
+      ]
+    },
+    {
+      "detection": [
+        { "field": "EventID", "op": "eq", "value": "800" },
+        { "field": "Channel", "op": "eq", "value": "Windows PowerShell" },
+        { "field": "ED_RawData", "op": "contains", "value": "KerberosRequestorSecurityToken" }
+      ]
+    }
+  ]
+}

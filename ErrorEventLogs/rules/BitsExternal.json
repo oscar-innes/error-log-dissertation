@@ -1,0 +1,21 @@
+{
+    "rule_title": "TTP 1197 - BITS Job Created Pointing to External URL",
+    "description": "Detects any BITS job creation event (EID 3) followed by a URL resolution (EID 59) targeting an external host. EID 3 fires when a new BITS job is created, EID 59 when it begins transferring. Correlating on jobId ties creation to the specific download URL.",
+    "logic": "AND",
+      "severity": "high",
+    "threshold": 1,
+    "window_seconds": 60,
+    "detection": [
+      { "field": "Channel", "op": "eq", "value": "Microsoft-Windows-Bits-Client/Operational" },
+      { "field": "EventID", "op": "eq", "value": "3" }
+    ],
+    "steps": [
+      {
+        "step": 1,
+        "detection": [
+          { "field": "EventID", "op": "eq", "value": "59" },
+          { "field": "ED_url", "op": "contains_any", "value": ["http://", "https://", "ftp://"] }
+        ]
+      }
+    ]
+  }

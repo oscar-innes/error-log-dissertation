@@ -1,0 +1,21 @@
+{
+    "rule_title": "T1036.005 - Executable execution from Temp directory",
+    "description": "Detects execution of any executable file from the user's AppData\\Local\\Temp directory. This is a common technique used by malware (like njRAT or Emotet) to hide and execute initial payloads.",
+    "severity": "medium",
+    "logic": "AND",
+    "detection": [
+      {
+        "field": "EventID",
+        "op": "in",
+        "value": [
+          "1",
+          "4688"
+        ]
+      },
+      {
+        "field": "ED_Image",
+        "op": "regex",
+        "value": ".*\\\\AppData\\\\Local\\\\Temp\\\\.*\\.exe$"
+      }
+    ]
+  }

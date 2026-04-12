@@ -1,0 +1,37 @@
+{
+    "rule_title": "TTP 1136.001 - Local Admin Backdoor Account Created via net.exe or PowerShell",
+    "description": "Detects creation of a local user account followed by addition to the local Administrators group, or direct password-expiry manipulation via wmic/Set-LocalUser. This TTP establishes a persistent local admin backdoor and is almost always malicious on production endpoints. Service-style account names (svc_*, admin_*, health*, helper*, support*) masquerading as legitimate accounts further raise fidelity. Detects both the Security EID 4720/4732 account lifecycle events and the Security EID 4688 / Sysmon EID 1 command line.",
+    "logic": "AND",
+      "severity": "low",
+    "detection": [
+          {
+            "field": "EventID",
+            "op": "eq",
+            "value": "4688"
+          },
+          {
+            "field": "Channel",
+            "op": "eq",
+            "value": "Security"
+          },
+          {
+            "field": "ED_CommandLine",
+            "op": "contains_any",
+            "value": [
+              "net user",
+              "net.exe user",
+              "net1 user",
+              "net1.exe user",
+              "New-LocalUser",
+              "net localgroup",
+              "net.exe localgroup",
+              "net1 localgroup",
+              "net1.exe localgroup",
+              "Add-LocalGroupMember",
+              "wmic useraccount",
+              "wmic.exe useraccount",
+              "Set-LocalUser"
+            ]
+          }
+        ]
+      }

@@ -1,0 +1,10 @@
+{
+    "rule_title": "TTP 1098 - DSRM Password Reset",
+    "description": "Detects attempts to reset the Directory Services Restore Mode (DSRM) administrator password.",
+    "logic": "AND",
+    "severity": "medium",
+    "detection": [
+          { "field": "EventID", "op": "eq", "value": "4688" },
+          { "field": "ED_CommandLine", "op": "contains", "value": "set dsrm password" }
+        ]
+}

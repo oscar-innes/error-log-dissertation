@@ -1,0 +1,45 @@
+  {
+    "rule_title": "TTP 1562.001 / 1562.002 - Defense Evasion: Audit Policy Tampering or Defender Exclusion Added",
+    "description": "Detects two high-fidelity defense evasion behaviours: (a) disabling or clearing Windows audit subcategories via auditpol.exe, and (b) adding Microsoft Defender exclusions for paths, processes, or extensions via Add-MpPreference / Set-MpPreference, or disabling Defender real-time protection features. Either action on a production endpoint is almost always an attacker preparing to execute payloads or cover their tracks. Requires PowerShell Script Block Logging (EID 4104) enabled.",
+    "logic": "AND",
+      "severity": "critical",
+    "detection": [
+          {
+            "field": "EventID",
+            "op": "eq",
+            "value": "4104"
+          },
+          {
+            "field": "ED_ScriptBlockText",
+            "op": "contains_any",
+            "value": ["/set", "Add-MpPreference",
+              "Set-MpPreference", "auditpol"]
+          },
+          {
+            "field": "ED_ScriptBlockText",
+            "op": "contains_any",
+            "value": [
+              ":disable",
+              "/success:disable",
+              "/failure:disable",
+              "auditpol /clear",
+              "auditpol.exe /clear",
+              "auditpol /remove",
+              "auditpol.exe /remove",
+                "-ExclusionPath",
+              "-ExclusionProcess",
+              "-ExclusionExtension",
+              "-ExclusionIpAddress",
+              "-DisableRealtimeMonitoring",
+              "-DisableBehaviorMonitoring",
+              "-DisableScriptScanning",
+              "-DisableIOAVProtection",
+              "-DisableBlockAtFirstSeen",
+              "-MAPSReporting 0",
+              "-SubmitSamplesConsent 2"
+            ]
+          }
+        ]
+      }
+    
+  

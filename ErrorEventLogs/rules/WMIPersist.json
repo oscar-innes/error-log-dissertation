@@ -1,0 +1,28 @@
+{
+    "rule_title": "T1546.003 - WMI Event Subscription Persistence",
+    "description": "Detects creation of WMI permanent event subscriptions using Set-WmiInstance to create an __EventFilter, CommandLineEventConsumer, and __FilterToConsumerBinding in root\\subscription. A stealthy persistence mechanism that survives reboots and runs without any scheduled task or service entry.",
+    "severity": "critical",
+    "logic": "AND",
+    "detection": [
+      {
+        "field": "EventID",
+        "op": "eq",
+        "value": "4104"
+      },
+      {
+        "field": "ED_ScriptBlockText",
+        "op": "regex",
+        "value": "(?i)Set-WmiInstance"
+      },
+      {
+        "field": "ED_ScriptBlockText",
+        "op": "regex",
+        "value": "(?i)root\\\\subscription"
+      },
+      {
+        "field": "ED_ScriptBlockText",
+        "op": "regex",
+        "value": "(?i)(CommandLineEventConsumer|__FilterToConsumerBinding|__EventFilter)"
+      }
+    ]
+  }

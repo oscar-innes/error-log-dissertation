@@ -1,0 +1,38 @@
+  {
+    "rule_title": "TTP 1490 - Inhibit System Recovery via bcdedit or Shadow Copy Deletion",
+    "description": "Detects execution of bcdedit.exe to disable Windows recovery options or ignore boot failures, OR deletion of volume shadow copies via vssadmin, wmic, wbadmin, or PowerShell WMI. This TTP is used by virtually every modern ransomware family (Ryuk, Conti, LockBit, BlackCat/ALPHV, Royal) as the final step before file encryption to prevent victims from recovering via Windows Recovery Environment, safe mode, or VSS restore. Almost never performed legitimately on user endpoints. Requires PowerShell Script Block Logging (EID 4104) enabled.",
+    "logic": "AND",
+    "severity": "critical",
+    "detection": [
+      {
+            "field": "EventID",
+            "op": "eq",
+            "value": "4104"
+          },
+          {
+            "field": "Channel",
+            "op": "eq",
+            "value": "Microsoft-Windows-PowerShell/Operational"
+          },
+          {
+            "field": "ED_ScriptBlockText",
+            "op": "contains_any",
+            "value": [
+              "recoveryenabled No",
+              "recoveryenabled no",
+              "bootstatuspolicy ignoreallfailures",
+              "/set {default} safeboot",
+              "/deletevalue {default} safeboot",
+              "vssadmin delete shadows",
+              "vssadmin.exe delete shadows",
+              "wmic shadowcopy delete",
+              "wmic.exe shadowcopy delete",
+              "wbadmin delete catalog",
+              "wbadmin delete systemstatebackup",
+              "wbadmin.exe delete catalog",
+              "Get-WmiObject Win32_Shadowcopy",
+              "Get-CimInstance Win32_Shadowcopy"
+            ]
+          }
+        ]
+      }

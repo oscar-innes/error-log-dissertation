@@ -1,0 +1,16 @@
+{
+    "rule_title": "TTP 1547.005 - Rogue SSP Loaded into LSA (Non-System32 Path)",
+    "description": "Detects a Security Support Provider being loaded by LSA from a path outside of System32 — the definitive indicator of a malicious SSP DLL registered for persistence or credential interception. All 420 events in the baseline show only System32 paths. Any SecurityPackageName pointing elsewhere is high fidelity.",
+    "logic": "AND",
+    "severity": "critical",
+    "detection": [
+      { "field": "EventID", "op": "eq", "value": "4622" },
+      { "field": "Channel", "op": "eq", "value": "Security" },
+      { "field": "ED_SecurityPackageName", "op": "not_contains_any", "value": [
+          "C:\\Windows\\system32\\",
+          "C:\\Windows\\System32\\"
+        ]
+      }
+    ]
+
+  }

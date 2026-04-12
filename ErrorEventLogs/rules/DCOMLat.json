@@ -1,0 +1,27 @@
+{
+  "rule_title": "TTP 1021.003 - DCOM Lateral Movement - MMC20 Remote Process Spawn",
+  "description": "Detects lateral movement via the MMC20.Application DCOM object, which allows remote code execution by activating mmc.exe on a target host. The pattern is a network logon (LogonType 3) from a remote IP followed immediately by mmc.exe spawning with the -Embedding flag as a child of svchost.exe (the DCOM Server Process Launcher). The -Embedding argument is exclusive to DCOM activation and is never present in interactive or scripted MMC use.",
+  "logic": "AND",
+    "severity": "critical",
+  "threshold": 1,
+  "window_seconds": 30,
+  "detection": [
+    { "field": "Channel", "op": "eq", "value": "Security" },
+    { "field": "EventID", "op": "eq", "value": "4624" },
+        { "field": "ED_LogonType", "op": "eq", "value": "3" },
+        { "field": "ED_AuthenticationPackageName", "op": "eq", "value": "NTLM" },
+        { "field": "ED_LogonProcessName", "op": "eq", "value": "NtLmSsp" }
+  ],
+  "steps": [
+    {
+      "step": 1,
+      "description": "mmc.exe spawned with -Embedding by svchost.exe — definitive DCOM activation signature",
+      "detection": [
+        { "field": "EventID", "op": "eq", "value": "4688" },
+        { "field": "ED_NewProcessName", "op": "endswith", "value": "\\mmc.exe" },
+        { "field": "ED_CommandLine", "op": "contains", "value": "-Embedding" },
+        { "field": "ED_ParentProcessName", "op": "endswith", "value": "\\svchost.exe" }
+      ]
+    }
+  ]
+}

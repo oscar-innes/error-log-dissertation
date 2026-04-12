@@ -1,0 +1,11 @@
+{
+    "rule_title": "TTP T1134 - Sensitive user right assigned to account",
+    "description": "Detects Event 4704 where a sensitive privilege is assigned to a user account. SeCreateTokenPrivilege, SeAssignPrimaryTokenPrivilege, SeDebugPrivilege, and SeImpersonatePrivilege to target accounts — all of which enable token manipulation, credential access, or privilege escalation.",
+    "logic": "AND",
+    "severity": "high",
+    "detection": [
+      { "field": "EventID", "op": "in", "value": ["4704", "4717"] },
+      { "field": "Channel", "op": "eq", "value": "Security" },
+      { "field": "ED_PrivilegeList", "op": "in", "value": ["SeCreateTokenPrivilege", "SeAssignPrimaryTokenPrivilege", "SeDebugPrivilege", "SeImpersonatePrivilege", "SeTcbPrivilege", "SeLoadDriverPrivilege", "SeBackupPrivilege", "SeRestorePrivilege"] }
+    ]
+}

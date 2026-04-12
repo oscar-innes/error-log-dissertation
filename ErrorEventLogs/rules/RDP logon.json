@@ -1,0 +1,10 @@
+
+{
+    "rule_title": "Successful RDP logon detected",
+    "description": "A successful RDP logon has been detected - lateral movement if unexpected",
+    "logic": "AND", 
+    "severity": "medium",
+    "detection": [
+        { "field": "EventID", "op": "eq", "value": "1149" },
+        { "field": "Channel", "op": "eq", "value": "Microsoft-Windows-TerminalServices-RemoteConnectionManager/Operational" }    ]
+}

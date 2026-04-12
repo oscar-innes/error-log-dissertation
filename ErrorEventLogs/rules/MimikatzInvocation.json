@@ -1,0 +1,28 @@
+{
+    "rule_title": "Certutil.exe Suspicious Command Line",
+    "description": "Detects suspicious command line DOWNLOAD arguments used with certutil.exe, which may indicate malicious activity.",
+    "severity": "high",
+    "logic": "AND",
+    "detection": [
+      {
+        "field": "EventID",
+        "op": "in",
+        "value": [
+          "4104", "4103"
+        ]
+      },
+      {
+        "field": "Channel",
+        "op": "eq",
+        "value": "Microsoft-Windows-Sysmon/Operational"
+      },
+      {
+        "field": "ED_Payload",
+        "op": "contains_any",
+        "value": [
+          "Invoke-Mimikatz",
+          "amsiInitFailed"
+        ]
+      }
+    ]
+  }

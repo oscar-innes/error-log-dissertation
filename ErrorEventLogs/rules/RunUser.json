@@ -1,0 +1,32 @@
+{
+    "rule_title": "TTP T1134.002 - Runas execution to spawn process as different user",
+    "description": "Detects runas.exe execution with a /user: parameter targeting a different domain account. ",
+    "logic": "AND",
+    "severity": "high",
+    "threshold": 1,
+    "window_seconds": 60,
+    "detection": [
+          { "field": "EventID", "op": "eq", "value": "4688" },
+          { "field": "Channel", "op": "eq", "value": "Security" },
+          { "field": "ED_NewProcessName", "op": "endswith", "value": "\\runas.exe" },
+          { "field": "ED_CommandLine", "op": "contains", "value": "/user" }
+    ],
+    "steps": [
+      {
+        "step": 1,
+        "detection": [
+          { "field": "EventID", "op": "eq", "value": "4648" },
+          { "field": "ED_TargetServerName", "op": "eq", "value": "localhost" },
+          { "field": "ED_ProcessName", "op": "contains", "value": "\\svchost.exe" }
+        ]
+      },
+      {
+
+        "step": 2,
+        "detection": [
+          { "field": "EventID", "op": "eq", "value": "4624" },
+          { "field": "ED_LogonType", "op": "eq", "value": "2" }
+        ]
+      }
+    ]
+}

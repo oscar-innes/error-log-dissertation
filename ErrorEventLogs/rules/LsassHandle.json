@@ -1,0 +1,24 @@
+{
+    "rule_title": "TTP 1003.001 - Mimikatz LSASS Process Object Handle Request via Security Log (EID 4656)",
+    "description": "Detects EID 4656 — a handle request on lsass.exe as a Process ObjectType — from a non-system binary with AccessMask 0x1010. This is the Security audit log equivalent of Sysmon EID 10. ObjectType 'Process' with ObjectName pointing to lsass.exe from ProcessName outside System32 is definitively anomalous. AccessMask 0x1010 = PROCESS_QUERY_LIMITED_INFORMATION (0x1000) + PROCESS_VM_READ (0x10).",
+    "logic": "AND",
+    "severity": "high",
+    "detection": [
+      { "field": "EventID", "op": "eq", "value": "4656" },
+      { "field": "Channel", "op": "eq", "value": "Security" },
+      { "field": "ED_ObjectType", "op": "eq", "value": "Process" },
+      { "field": "ED_ObjectName", "op": "endswith", "value": "lsass.exe" },
+      { "field": "ED_AccessMask", "op": "in", "value": [
+          "0x00001010",
+          "0x00001410",
+          "0x0000143a",
+          "0x001fffff"
+        ]
+      },
+      { "field": "ED_ProcessName", "op": "not_contains_any", "value": [
+          "\\Windows\\System32\\",
+          "\\Windows\\SysWOW64\\"
+        ]
+      }
+    ]
+  }

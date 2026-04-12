@@ -1,0 +1,33 @@
+{
+    "rule_title": "Certutil.exe Suspicious Command Line",
+    "description": "Detects suspicious command line DOWNLOAD arguments used with certutil.exe, which may indicate malicious activity.",
+    "severity": "high",
+    "logic": "AND",
+    "detection": [
+      {
+        "field": "EventID",
+        "op": "eq",
+        "value": "1"
+      },
+      {
+        "field": "Channel",
+        "op": "eq",
+        "value": "Microsoft-Windows-Sysmon/Operational"
+      },
+      {
+        "field": "ED_ParentImage",
+        "op": "endswith",
+        "value": "\\WmiPrvSE.exe"
+      },
+      {
+        "field": "ED_Image",
+        "op": "endswith",
+        "value": "\\cmd.exe"
+      },
+      {
+        "field": "ED_CommandLine",
+        "op": "contains",
+        "value": "-exec bypass"
+      }
+    ]
+  }

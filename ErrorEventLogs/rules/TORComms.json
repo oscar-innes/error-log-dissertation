@@ -1,0 +1,21 @@
+  {
+    "rule_title": "WannaCry - taskhsvc.exe Tor client execution",
+    "description": "Detects execution of taskhsvc.exe, the bundled Tor client used by WannaCry for C2 communication with .onion infrastructure.",
+    "severity": "critical",
+    "logic": "AND",
+    "detection": [
+      {
+        "field": "EventID",
+        "op": "in",
+        "value": [
+          "1",
+          "4688"
+        ]
+      },
+      {
+        "field": "ED_Image",
+        "op": "endswith",
+        "value": "\\taskhsvc.exe"
+      }
+    ]
+  }

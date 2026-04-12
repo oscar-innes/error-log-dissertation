@@ -1,0 +1,18 @@
+{
+    "rule_title": "TTP 1563.001 - Symbolic Link Created Targeting Sensitive System Path",
+    "description": "Tighter variant of EID 4664 detection filtering on links where the target (FileName) or link location points to sensitive system paths — a strong indicator of privilege escalation attempts via symlink abuse rather than benign shortcut creation.",
+    "logic": "AND",
+      "severity": "high",
+    "detection": [
+      { "field": "EventID", "op": "eq", "value": "4664" },
+      { "field": "Channel", "op": "eq", "value": "Security" },
+      { "field": "ED_FileName", "op": "in", "value": [
+          "\\Windows\\System32\\",
+          "\\Windows\\SysWOW64\\",
+          "\\Windows\\Temp\\",
+          "\\ProgramData\\",
+          "\\pipe\\"
+        ]
+      }
+    ]
+  }

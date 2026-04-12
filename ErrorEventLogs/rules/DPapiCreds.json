@@ -1,0 +1,26 @@
+ {
+    "rule_title": "TTP 1555 - Remote Browser Credential Sweep via C$ Network Share (DonPapi)",
+    "description": "Detects DonPapi accessing browser saved credential stores remotely over the C$ share. The tool sweeps Chrome User Data, Firefox profiles.ini, and Firefox-based browser variants (Cyberfox, IceDragon, K-Meleon, BlackHawk, Icecat) across every user profile on the target host.",
+    "logic": "AND",
+    "severity": "high",
+    "threshold": 3,
+    "window_seconds": 60,
+    "detection": [
+      { "field": "EventID", "op": "eq", "value": "5145" },
+      { "field": "Channel", "op": "eq", "value": "Security" },
+      { "field": "ED_ShareName", "op": "contains", "value": "C$" },
+      { "field": "ED_RelativeTargetName", "op": "contains_any", "value": [
+          "Google\\Chrome\\User Data",
+          "Mozilla\\Firefox\\profiles.ini",
+          "8pecxstudios\\Cyberfox\\profiles.ini",
+          "Comodo\\IceDragon\\profiles.ini",
+          "K-Meleon\\profiles.ini",
+          "NETGATE Technologies\\BlackHawk\\profiles.ini",
+          "Mozilla\\icecat\\profiles.ini",
+          "RDCMan.settings",
+          "ultravnc.ini",
+          "mRemoteNG"
+        ]
+      }
+    ]
+ }

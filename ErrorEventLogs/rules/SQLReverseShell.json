@@ -1,0 +1,26 @@
+{
+    "rule_title": "TTP 1505 - SQL Server Spawning Command Shell",
+    "description": "Detects Microsoft SQL Server spawning a command shell, which often indicates the use of xp_cmdshell for unauthorized OS command execution.",
+    "logic": "AND",
+    "threshold": 1,
+    "window_seconds": 60,
+    "severity": "high",
+    "detection": [
+      {
+        "field": "EventID",
+        "op": "eq",
+        "value": "104"
+      }
+    ],
+    "steps": [
+      {
+        "step": 1,
+        "detection": [
+          { "field": "EventID", "op": "eq", "value": "4688" },
+          { "field": "Channel", "op": "eq", "value": "Security" },
+          { "field": "ED_ParentProcessName", "op": "endswith", "value": "\\sqlservr.exe" },
+          { "field": "ED_NewProcessName", "op": "endswith", "value": "\\cmd.exe" }
+        ]
+      }
+    ]
+}

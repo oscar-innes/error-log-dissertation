@@ -1,0 +1,20 @@
+{
+    "rule_title": "TTP 1110 - Local Brute Force via Advapi LogonType 2 (AccountRestore / Password Recovery Tool)",
+    "description": "Detects automated local account password brute forcing via the Windows Advapi LogonType 2 interface. Legitimate interactive logon failures (EID 4625 LogonType 2) come exclusively from winlogon.exe — any other ProcessName in the 4625 event indicates a tool is calling LogonUser() or similar APIs to test passwords locally without the Windows GUI. AccountRestore, NirSoft tools, and custom brute-force scripts all leave this signature. SubStatus 0xc000006a confirms wrong password rather than locked/disabled.",
+    "logic": "AND",
+    "severity": "high",
+    "threshold": 5,
+    "window_seconds": 10,
+    "detection": [
+      { "field": "EventID", "op": "eq", "value": "4625" },
+      { "field": "Channel", "op": "eq", "value": "Security" },
+      { "field": "ED_LogonType", "op": "eq", "value": "2" },
+      { "field": "ED_LogonProcessName", "op": "contains", "value": "Advapi" },
+      { "field": "ED_ProcessName", "op": "not_contains_any", "value": [
+          "\\Windows\\System32\\winlogon.exe",
+          "\\Windows\\System32\\lsass.exe",
+          "\\Windows\\System32\\svchost.exe"
+        ]
+      }
+    ]
+}

@@ -1,0 +1,33 @@
+{
+  "rule_title": "TTP — WMIexec remote command execution via SMB",
+  "description": "Detects Impacket WMIexec (or compatible tools) executing commands remotely via WMI ",
+  "logic": "AND",
+  "severity": "high",
+  "detection": [
+        {
+          "field": "EventID",
+          "op": "eq",
+          "value": "4688"
+        },
+        {
+          "field": "Channel",
+          "op": "eq",
+          "value": "Security"
+        },
+        {
+          "field": "ED_NewProcessName",
+          "op": "endswith",
+          "value": "\\cmd.exe"
+        },
+        {
+          "field": "ED_CommandLine",
+          "op": "contains",
+          "value": "/Q /c"
+        },
+        {
+          "field": "ED_CommandLine",
+          "op": "re_match",
+          "value": "ADMIN\\$\\\\__[0-9]+"
+        }
+    ]
+}

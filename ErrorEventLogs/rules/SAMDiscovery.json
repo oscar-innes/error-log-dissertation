@@ -1,0 +1,13 @@
+{
+    "rule_title": "TTP 1069.002 - Massive SAM Domain Users and Groups Discovery",
+    "description": "Detects bulk SAM enumeration — a high volume of 4661 SAM_USER or SAM_GROUP object handle requests from a single source in a short window. This is the CrackMapExec --users and --groups enumeration pattern, requesting handles to every user and group object in the domain sequentially.",
+    "logic": "AND",
+    "severity": "high",
+    "threshold": 50,
+    "window_seconds": 30,
+    "detection": [
+      { "field": "EventID", "op": "eq", "value": "4661" },
+      { "field": "Channel", "op": "eq", "value": "Security" },
+      { "field": "ED_ObjectType", "op": "in", "value": ["SAM_USER", "SAM_GROUP", "SAM_DOMAIN"] }
+    ]
+  }

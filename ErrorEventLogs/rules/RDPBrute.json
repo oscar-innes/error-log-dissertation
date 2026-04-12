@@ -1,0 +1,20 @@
+{
+  "rule_title": "Credential Access: Brute Force Attempt",
+  "description": "Detected 10+ failed logons within 30 seconds.",
+  "logic": "AND",
+  "severity": "high",
+  "threshold": 10,
+  "window_seconds": 30,
+  "detection": [
+    {
+      "field": "EventID",
+      "op": "eq",
+      "value": "131"
+    },
+    {
+      "field": "Channel",
+      "op": "eq",
+      "value": "Microsoft-Windows-RemoteDesktopServices-RdpCoreTS/Operational"
+    }
+  ]
+}

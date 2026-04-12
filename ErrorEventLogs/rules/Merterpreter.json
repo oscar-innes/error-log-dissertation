@@ -1,0 +1,28 @@
+{
+  "rule_title": "Meterpreter Service Deployment Timeout Detection",
+  "description": "Detects Meterpreter's psexec-style lateral movement technique where a randomly named service is deployed but times out during startup. Event 7009 fires when the injected service binary fails to respond within the SCM timeout window (default 30000ms), leaving a characteristic high-entropy service name as evidence.",
+  "logic": "AND",
+  "severity": "medium",
+  "detection": [
+    {
+      "field": "EventID",
+      "op": "equals",
+      "value": "7009"
+    },
+    {
+      "field": "Channel",
+      "op": "equals",
+      "value": "System"
+    },
+    {
+      "field": "ED_param1",
+      "op": "equals",
+      "value": "30000"
+    },
+    {
+      "field": "ED_param2",
+      "op": "regex",
+      "value": "^[a-zA-Z]{16}$"
+    }
+  ]
+}

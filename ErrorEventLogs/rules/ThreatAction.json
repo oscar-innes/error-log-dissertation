@@ -1,0 +1,18 @@
+{
+    "rule_title": "TTP T1562.001 - Defender ThreatDefaultAction Allow Confirmed via EID 4103 ParameterBinding",
+    "description": "High-confidence detection of the ThreatDefaultAction Allow technique via EID 4103 Module Logging ParameterBinding, which resolves the numeric value 6 to the string 'Allow'. The EID 4103 Payload field contains the fully resolved parameter names and values as bound by PowerShell's parameter binder — meaning even if the attacker passed '6' as an integer, the log records 'Allow'. Matching on 'value=\"Allow\"' in the Payload with ThreatDefaultAction as the parameter name is definitively malicious with no legitimate equivalent.",
+    "logic": "AND",
+    "severity": "high",
+    "detection": [
+      { "field": "EventID", "op": "eq", "value": "4103" },
+      { "field": "Channel", "op": "eq", "value": "Microsoft-Windows-PowerShell/Operational" },
+      { "field": "ED_Payload", "op": "contains", "value": "Set-MpPreference" },
+      { "field": "ED_Payload", "op": "contains_any", "value": [
+          "ThreatDefaultAction",
+          "HighThreatDefaultAction",
+          "SevereThreatDefaultAction"
+        ]
+      },
+      { "field": "ED_Payload", "op": "contains", "value": "Allow" }
+    ]
+  }

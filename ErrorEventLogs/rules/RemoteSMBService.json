@@ -1,0 +1,23 @@
+{
+    "rule_title": "TTP 1543.003 - Remote Service Creation/Manipulation",
+    "description": "Detects remote access to the Service Control Manager (svcctl) over SMB, commonly used for lateral movement.",
+    "logic": "AND",
+    "severity": "high",
+    "detection": [
+      {
+        "field": "EventID",
+        "op": "eq",
+        "value": "5145"
+      },
+      {
+        "field": "ED_RelativeTargetName",
+        "op": "eq",
+        "value": "svcctl"
+      },
+      {
+        "field": "ED_AccessMask",
+        "op": "eq",
+        "value": "0x3"
+      }
+    ]
+}

@@ -1,0 +1,37 @@
+  {
+    "rule_title": "TTP T1003.002 - DAMP: WmiPrvSE Privileged Access to SAM Registry Hive",
+    "description": "Detects WmiPrvSE.exe performing privileged access to the SAM registry hive. During a DAMP attack, DACLs across the entire SAM tree are modified to grant Everyone full access, enabling remote credential extraction.",
+    "severity": "high",
+    "logic": "AND",
+    "detection": [
+      {
+        "field": "EventID",
+        "op": "eq",
+        "value": "4674"
+      },
+      {
+        "field": "Channel",
+        "op": "eq",
+        "value": "Security"
+      },
+      {
+        "field": "ED_ObjectType",
+        "op": "eq",
+        "value": "Key"
+      },
+      {
+        "field": "ED_ObjectName",
+        "op": "contains_any",
+        "value": [
+          "\\REGISTRY\\MACHINE\\SAM",
+          "\\REGISTRY\\MACHINE\\SECURITY",
+          "SecurePipeServers\\winreg"
+        ]
+      },
+      {
+        "field": "ED_ProcessName",
+        "op": "contains",
+        "value": "WmiPrvSE.exe"
+      }
+    ]
+  }

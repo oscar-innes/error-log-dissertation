@@ -1,0 +1,26 @@
+  {
+    "rule_title": "T1059.005 - Script from user-writable directory",
+    "description": "Detects script interpreters (cscript, wscript, mshta, powershell) executing a file located in a user-writable directory such as Downloads, Temp, AppData, or ProgramData. Legitimate enterprise scripts run from Program Files, Windows, or a network share. Scripts in user-writable paths are overwhelmingly malicious droppers or second-stage payloads. Catches WannaCry m.vbs, Emotet JavaScript droppers, Cerber VBScript loaders, and generic phishing document payloads.",
+    "severity": "high",
+    "logic": "AND",
+    "detection": [
+      {
+        "field": "EventID",
+        "op": "in",
+        "value": [
+          "1",
+          "4688"
+        ]
+      },
+      {
+        "field": "ED_Image",
+        "op": "regex",
+        "value": ".*\\\\(cscript|wscript|mshta)\\.exe$"
+      },
+      {
+        "field": "ED_CommandLine",
+        "op": "regex",
+        "value": ".*\\\\(Users|Temp|AppData|ProgramData|Downloads|Public)\\\\.*\\.(vbs|vbe|js|jse|wsf|wsh|hta|py|)"
+      }
+    ]
+  }

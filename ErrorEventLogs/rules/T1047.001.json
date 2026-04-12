@@ -1,0 +1,27 @@
+{
+    "rule_title": "WMIExec Execution Detection",
+    "description": "Detects WMI command execution, which may indicate malicious activity or lateral movement.",
+    "severity": "high",
+    "detection": [
+        {
+            "field": "EventID",
+            "op": "equals",
+            "value": "1"
+        },
+        {
+            "field": "Channel",
+            "op": "equals",
+            "value": "Microsoft-Windows-Sysmon/Operational"
+        },
+        {
+          "field": "ED_ParentImage",
+          "op": "endswith",
+          "value": "\\WmiPrvSE.exe"
+        },
+        {
+          "field": "ED_Image",
+          "op": "endswith",
+          "value": "\\cmd.exe"
+        }
+    ]
+}

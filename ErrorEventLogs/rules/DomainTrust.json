@@ -1,0 +1,10 @@
+{
+    "rule_title": "TTP T1482 - New domain trust created",
+    "description": "Detects creation of a new trusted domain relationship (Event 4706). In the observed data, Administrator on MYPARTNER created a bidirectional forest trust (TdoDirection=3, TdoAttributes=8) with rootblue.lan, with SID filtering disabled. This enables cross-forest lateral movement and is a high-severity persistence/escalation technique.",
+    "logic": "AND",
+    "severity": "low",
+    "detection": [
+          { "field": "EventID", "op": "eq", "value": "4706" },
+          { "field": "Channel", "op": "eq", "value": "Security" }
+        ]
+}

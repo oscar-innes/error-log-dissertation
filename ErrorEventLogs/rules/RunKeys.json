@@ -1,0 +1,23 @@
+  {
+    "rule_title": "T1547.001 - Run key persistence pointing to AppData/Temp",
+    "description": "Detects Run key entries pointing to executables in user-writable directories. Generic trojan persistence pattern - legitimate software almost never installs Run keys pointing to AppData, Temp, or ProgramData.",
+    "severity": "high",
+    "logic": "AND",
+    "detection": [
+      {
+        "field": "EventID",
+        "op": "eq",
+        "value": "13"
+      },
+      {
+        "field": "ED_TargetObject",
+        "op": "contains",
+        "value": "\\CurrentVersion\\Run\\"
+      },
+      {
+        "field": "ED_Details",
+        "op": "regex",
+        "value": ".*\\\\(AppData|Temp|ProgramData|Users\\\\Public)\\\\.*\\.(exe|bat|vbs|ps1|js|hta).*"
+      }
+    ]
+  }

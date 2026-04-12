@@ -1,0 +1,20 @@
+{
+    "rule_title": "TTP T1562.001 - Sysmon Kernel Driver Unloaded: FilterManager EID 1 DeviceName SysmonDrv",
+    "description": "Detects the Sysmon kernel driver (SysmonDrv) being unloaded via the Windows Filter Manager channel. This is the definitive indicator that Sysmon has been disabled at the kernel level — fltMC.exe unload SysmonDrv or sc stop SysmonDrv both cause the Filter Manager to log EID 1 with DeviceName=SysmonDrv when the minifilter detaches. Once SysmonDrv is unloaded, all Sysmon telemetry (process creates, network connections, registry changes, file creates, process injection) immediately ceases. This event is particularly high value because it fires in the System channel which is almost universally collected, providing detection even when Sysmon's own Operational log is cleared or unavailable.",
+    "logic": "AND",
+    "detection": [
+      { "field": "EventID", "op": "eq", "value": "1" },
+      { "field": "Channel", "op": "eq", "value": "System" },
+      { "field": "ED_DeviceName", "op": "contains_any", "value": [
+          "SysmonDrv",
+          "WdFilter",
+          "MpKsl",
+          "CrowdStrike",
+          "CarbonBlack",
+          "SentinelOne",
+          "Cylance",
+          "cyoptics",
+          "cbk7"
+        ] }
+    ]
+  }

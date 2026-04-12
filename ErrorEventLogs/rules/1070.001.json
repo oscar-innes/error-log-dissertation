@@ -1,0 +1,14 @@
+
+{
+    "rule_title": "TTP 1070.001 - Event Log Clear",
+    "description": "Event Log was cleared, which may indicate an attempt to cover tracks.",
+    "logic": "AND",
+    "severity": "medium",
+    "detection": [
+      {
+        "field": "EventID",
+        "op": "eq",
+        "value": "1102"
+      }
+    ]
+}

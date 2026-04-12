@@ -1,0 +1,12 @@
+  {
+    "rule_title": "TTP 1546.007 - Netsh Helper DLL Registered for Persistence",
+    "description": "Detects use of netsh add helper to register a malicious DLL or executable as a netsh helper. Netsh loads all registered helpers into its process on every invocation, providing persistent code execution through a trusted signed binary. The registered path is written to HKLM\\SOFTWARE\\Microsoft\\NetSh and survives reboots.",
+    "logic": "AND",
+    "severity": "medium",
+    "detection": [
+      { "field": "EventID", "op": "eq", "value": "4688" },
+      { "field": "Channel", "op": "eq", "value": "Security" },
+      { "field": "ED_NewProcessName", "op": "endswith", "value": "\\netsh.exe" },
+      { "field": "ED_CommandLine", "op": "contains", "value": "add helper" }
+    ]
+  }

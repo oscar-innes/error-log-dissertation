@@ -1,0 +1,20 @@
+{
+  "rule_title": "Mass group access policy changes",
+  "description": "Detected 10+ failed logons within 60 seconds.",
+  "logic": "AND",
+  "severity": "high",
+  "threshold": 10,
+  "window_seconds": 60,
+  "detection": [
+    {
+      "field": "EventID",
+      "op": "eq",
+      "value": "4728"
+    },
+    {
+      "field": "Channel",
+      "op": "eq",
+      "value": "Security"
+    }
+  ]
+}

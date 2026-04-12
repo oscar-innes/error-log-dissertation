@@ -1,0 +1,11 @@
+{
+  "rule_title": "TTP 1078.002 - Privileged Account and Share Manipulation",
+  "description": "Detects logons by special administrative groups and modifications to network share permissions.",
+  "logic": "AND",
+  "severity": "high",
+  "detection": [
+        { "field": "EventID", "op": "eq", "value": "4964" },
+        { "field": "Channel", "op": "eq", "value": "Security" }
+      ]
+    }
+  

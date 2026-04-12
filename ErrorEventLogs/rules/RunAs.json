@@ -1,0 +1,108 @@
+  {
+    "rule_title": "TTP 1134.002 / 1078.003 - Credential Elevation via runas.exe",
+    "description": "Detects execution of runas.exe to launch a process under a different user context. On endpoints, runas is rarely used by legitimate users and is a common red-team and attacker technique for privilege escalation, credential validation, and switching to a backdoor admin account. High fidelity when the target user is a local admin, service-style account, or when the spawned process is cmd.exe / powershell.exe. Requires Security EID 4648 (Explicit Credential Logon) or Security EID 4688 / Sysmon EID 1 with command line.",
+    "logic": "OR",
+    "severity": "high",
+    "detection": [
+      {
+        "logic": "AND",
+        "detection": [
+          {
+            "field": "EventID",
+            "op": "eq",
+            "value": "4688"
+          },
+          {
+            "field": "Channel",
+            "op": "eq",
+            "value": "Security"
+          },
+          {
+            "field": "ED_NewProcessName",
+            "op": "contains",
+            "value": "runas.exe"
+          }
+        ]
+      },
+      {
+        "logic": "AND",
+        "detection": [
+          {
+            "field": "EventID",
+            "op": "eq",
+            "value": "4688"
+          },
+          {
+            "field": "Channel",
+            "op": "eq",
+            "value": "Security"
+          },
+          {
+            "field": "ED_CommandLine",
+            "op": "contains",
+            "value": "runas"
+          },
+          {
+            "field": "ED_CommandLine",
+            "op": "contains_any",
+            "value": [
+              "/user:",
+              "/savecred",
+              "/netonly",
+              "/trustlevel"
+            ]
+          }
+        ]
+      },
+      {
+        "logic": "AND",
+        "detection": [
+          {
+            "field": "EventID",
+            "op": "eq",
+            "value": "1"
+          },
+          {
+            "field": "Channel",
+            "op": "eq",
+            "value": "Microsoft-Windows-Sysmon/Operational"
+          },
+          {
+            "field": "ED_Image",
+            "op": "contains",
+            "value": "runas.exe"
+          }
+        ]
+      },
+      {
+        "logic": "AND",
+        "detection": [
+          {
+            "field": "EventID",
+            "op": "eq",
+            "value": "1"
+          },
+          {
+            "field": "Channel",
+            "op": "eq",
+            "value": "Microsoft-Windows-Sysmon/Operational"
+          },
+          {
+            "field": "ED_CommandLine",
+            "op": "contains",
+            "value": "runas"
+          },
+          {
+            "field": "ED_CommandLine",
+            "op": "contains_any",
+            "value": [
+              "/user:",
+              "/savecred",
+              "/netonly",
+              "/trustlevel"
+            ]
+          }
+        ]
+      }
+    ]
+  }

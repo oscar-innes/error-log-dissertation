@@ -1,0 +1,16 @@
+{
+  "rule_title": "TTP 1550.002 - Pass the Hash - Logon Type 9 with Null GUID and Loopback Source",
+  "description": "Detects Pass-the-Hash attacks via the canonical Mimikatz sekurlsa::pth fingerprint on EID 4624. LogonType 9 (NewCredentials) combined with a null LogonGuid, loopback source address, LogonProcessName of seclogo, and WorkstationName of '-' is the definitive Windows artifact of a locally-injected hash-based token.",
+  "logic": "AND",
+  "severity": "high",
+  "detection": [
+    { "field": "EventID", "op": "eq", "value": "4624" },
+    { "field": "Channel", "op": "eq", "value": "Security" },
+    { "field": "LogonType", "op": "eq", "value": "9" },
+    { "field": "ED_LogonProcessName", "op": "eq", "value": "seclogo" },
+    { "field": "ED_AuthenticationPackageName", "op": "eq", "value": "Negotiate" },
+    { "field": "ED_LogonGuid", "op": "eq", "value": "{00000000-0000-0000-0000-000000000000}" },
+    { "field": "ED_WorkstationName", "op": "eq", "value": "-" },
+    { "field": "ED_IpAddress", "op": "in", "value": ["::1", "127.0.0.1"] }
+  ]
+}

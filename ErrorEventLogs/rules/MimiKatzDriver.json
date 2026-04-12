@@ -1,0 +1,16 @@
+{
+    "rule_title": "TTP 1543.003 - Mimikatz Service Driver Installation",
+    "description": "Detects installation of the Mimikatz mimidrv kernel driver as a service. mimidrv.sys is registered as a kernel-mode driver service (ServiceType 0x1) and used by Mimikatz to bypass PPL protection on lsass.exe. The service name and driver filename are consistent across Mimikatz versions.",
+    "logic": "AND",
+    "severity": "high",
+    "detection": [
+      { "field": "EventID", "op": "in", "value": ["4697", "7045"] },
+      { "field": "Channel", "op": "in", "value": ["Security", "System"] },
+      { "field": "ED_ServiceFileName", "op": "contains_any", "value": [
+          "mimidrv",
+          "mimilib"
+        ]
+    }
+    ]
+      
+    }

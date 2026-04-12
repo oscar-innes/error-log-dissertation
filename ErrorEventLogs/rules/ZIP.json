@@ -1,0 +1,35 @@
+  {
+    "rule_title": "TTP 1560.001 - Data Staging and Archive via PowerShell Compress-Archive or Archive Utilities",
+    "description": "Detects creation of archive files via PowerShell Compress-Archive, 7-Zip, WinRAR, or tar, where the source or destination path sits in a commonly abused staging location (C:\\Users\\Public, C:\\ProgramData, C:\\Windows\\Temp, C:\\Temp, AppData\\Local\\Temp). Attackers stage collected data into an archive before exfiltration. Generic archive use is legitimate; the staging-path combination raises fidelity. Requires Security EID 4688 with command line auditing enabled, or Sysmon EID 1, or PowerShell EID 4104.",
+    "logic": "AND",
+    "severity": "medium",
+    "detection": [
+          {
+            "field": "EventID",
+            "op": "eq",
+            "value": "4688"
+          },
+          {
+            "field": "Channel",
+            "op": "eq",
+            "value": "Security"
+          },
+          {
+            "field": "ED_CommandLine",
+            "op": "contains_any",
+            "value": [
+              "Compress-Archive",
+              "7z.exe a",
+              "7za.exe a",
+              "7zr.exe a",
+              "WinRAR.exe a",
+              "Rar.exe a",
+              "makecab",
+              "tar -c",
+              "tar.exe -c",
+              "tar -czf",
+              "tar -cvf"
+            ]
+          }
+    ]
+  }

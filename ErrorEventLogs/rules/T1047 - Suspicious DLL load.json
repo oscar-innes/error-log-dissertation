@@ -1,0 +1,37 @@
+{
+    "rule_title": "TTP 1047 - PowerShell WMI Module Load",
+    "description": "Detects PowerShell loading WMI utilities, which may indicate WMI-based enumeration or execution. This can occur during admin scripting",
+    "logic": "AND",
+    "severity": "medium",
+    "detection": [
+      {
+        "field": "Channel",
+        "op": "eq",
+        "value": "Microsoft-Windows-Sysmon/Operational"
+      },
+      {
+        "field": "EventID",
+        "op": "eq",
+        "value": "7"
+      },
+        {
+          "field": "ED_Image",
+          "op": "endswith_any",
+          "values": [
+            "\\cmd.exe",
+            "\\powershell.exe",
+            "\\cscript.exe",
+            "\\wscript.exe",
+            "\\mshta.exe",
+            "\\rundll32.exe",
+            "\\regsvr32.exe",
+            "\\bitsadmin.exe"
+          ]
+        },
+      {
+        "field": "ED_ImageLoaded",
+        "op": "contains",
+        "value": "wmiutils.dll"
+      }
+    ]
+}

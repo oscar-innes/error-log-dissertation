@@ -1,0 +1,23 @@
+  {
+    "rule_title": "T1555.003 - Browser credential store access by non-browser process",
+    "description": "Detects file access to browser credential stores (Chrome Login Data, Firefox logins.json/key4.db) by a process that is not a legitimate browser. Indicates credential theft by an info-stealer or trojan.",
+    "severity": "critical",
+    "logic": "AND",
+    "detection": [
+      {
+        "field": "EventID",
+        "op": "eq",
+        "value": "11"
+      },
+      {
+        "field": "ED_TargetFilename",
+        "op": "regex",
+        "value": ".*\\\\(Google\\\\Chrome\\\\User Data\\\\.*\\\\Login Data|Mozilla\\\\Firefox\\\\Profiles\\\\.*\\\\(logins\\.json|key4\\.db)|Microsoft\\\\Edge\\\\User Data\\\\.*\\\\Login Data)$"
+      },
+      {
+        "field": "ED_Image",
+        "op": "regex",
+        "value": "^(?!.*\\\\(chrome|firefox|msedge|iexplore)\\.exe$).*$"
+      }
+    ]
+  }

@@ -1,0 +1,23 @@
+{
+  "rule_title": "T1565.002 — Data Manipulation of hosts file",
+  "description": "Modifying host file in DNS to manipulate data or point to a weird site",
+  "logic": "AND",
+  "severity": "medium",
+  "detection": [
+    {
+      "field": "EventID",
+      "op": "eq",
+      "value": "11"
+    },
+    {
+      "field": "Channel",
+      "op": "eq",
+      "value": "Microsoft-Windows-Sysmon/Operational"
+    },
+    {
+      "field": "ED_TargetFileName",
+      "op": "eq",
+      "value": "C:\\Windows\\System32\\drivers\\etc\\hosts"
+    }
+  ]
+}

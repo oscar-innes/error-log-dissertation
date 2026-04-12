@@ -1,0 +1,11 @@
+{
+    "rule_title": "TTP 1134 - Token Impersonation via SeImpersonatePrivilege",
+    "description": "Detects privilege escalation using token impersonation techniques (Potato attacks, PrintSpoofer etc.) by monitoring assignment of SeImpersonatePrivilege to non-service accounts via EID 4703.",
+    "logic": "AND",
+    "detection": [
+      { "field": "EventID", "op": "eq", "value": "4703" },
+      { "field": "Channel", "op": "eq", "value": "Security" },
+      { "field": "ED_EnabledPrivilegeList", "op": "contains", "value": "SeImpersonatePrivilege" },
+      { "field": "ED_TargetUserName", "op": "not_endswith", "value": "$" }
+    ]
+  }

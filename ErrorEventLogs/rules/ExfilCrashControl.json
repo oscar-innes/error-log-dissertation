@@ -1,0 +1,12 @@
+{
+    "rule_title": "TTP 1047 - WMIImplant CrashControl Registry Abuse for Data Exfiltration",
+    "description": "Detects WMIImplant writing to CrashControl registry keys via wmiprvse.exe. WMIImplant abuses the CrashControl hive as covert storage for exfiltrated data — network config, system info, and command output are encoded and written to values like DumpFile. wmiprvse.exe has no legitimate reason to modify CrashControl settings.",
+    "logic": "AND",
+    "severity": "high",
+    "detection": [
+      { "field": "EventID", "op": "eq", "value": "13" },
+      { "field": "Channel", "op": "eq", "value": "Microsoft-Windows-Sysmon/Operational" },
+      { "field": "ED_Image", "op": "endswith", "value": "\\wmiprvse.exe" },
+      { "field": "ED_TargetObject", "op": "contains", "value": "\\Control\\CrashControl\\" }
+    ]
+  }

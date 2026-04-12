@@ -1,0 +1,11 @@
+{
+  "rule_title": "TTP 1059.005 - Visual Basic Script Execution",
+  "description": "Detects execution of VBScript via wscript or cscript, commonly used in phishing and dropper campaigns.",
+  "logic": "AND",
+  "severity": "high",
+  "detection": [
+    { "field": "EventID", "op": "in", "value": ["4688", "1"] },
+    { "field": "ED_NewProcessName", "op": "endswith_any", "value": ["\\wscript.exe", "\\cscript.exe"] },
+    { "field": "ED_CommandLine", "op": "contains_any", "value": [".vbs", ".vbe", ".js", ".jse", ".wsf", ".vba"] }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+    "rule_title": "TTP 1003 - Mimikatz LSA SSP: Any Suspicious File Created by lsass.exe",
+    "description": "Broader variant catching any unexpected file creation by lsass.exe. lsass.exe has no legitimate reason to create files in user-accessible paths or outside its own operational locations. Covers mimilsa.log, mimikatz output files, and any novel Mimikatz variants that change the output filename. lsass.exe writing to System32, Temp, Desktop, or any user profile path is inherently anomalous.",
+    "logic": "AND",
+    "detection": [
+      { "field": "EventID", "op": "eq", "value": "11" },
+      { "field": "Channel", "op": "eq", "value": "Microsoft-Windows-Sysmon/Operational" },
+      { "field": "ED_Image", "op": "eq", "value": "C:\\Windows\\system32\\lsass.exe" },
+      { "field": "ED_TargetFilename", "op": "contains_any", "value": [
+          "mimilsa.log",
+          "mimikatz",
+          "mimi.log",
+          "\\Temp\\",
+          "\\Desktop\\",
+          "\\AppData\\"
+        ]
+      }
+    ]
+}

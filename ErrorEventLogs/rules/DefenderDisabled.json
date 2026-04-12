@@ -1,0 +1,24 @@
+{
+    "rule_title": "TTP T1562.001 - Defender Security Service Disabled via sc.exe",
+    "description": "Detects sc.exe setting the start type of a Windows security service to disabled. The three services seen in this sample cover the full defensive stack: WinDefend (Defender AV engine), sense (Microsoft Defender for Endpoint EDR sensor), and mpssvc (Windows Firewall). Disabling these at the service control layer prevents them from restarting after a reboot, making this a persistence-aware evasion technique. The 'start= disabled' syntax with a space before the value is the sc.exe command format — note the space is required by sc.exe and is therefore a reliable detection string.",
+    "logic": "AND",
+    "severity": "high",
+    "detection": [
+      { "field": "EventID", "op": "eq", "value": "4688" },
+      { "field": "Channel", "op": "eq", "value": "Security" },
+      { "field": "NewProcessName", "op": "endswith", "value": "\\sc.exe" },
+      { "field": "CommandLine", "op": "contains_any", "value": [
+          "WinDefend",
+          "sense",
+          "mpssvc",
+          "MsMpSvc",
+          "SecurityHealthService",
+          "wscsvc",
+          "wdnissvc",
+          "start= disabled",
+          "stop",
+        "delete"
+        ]
+      }
+    ]
+}

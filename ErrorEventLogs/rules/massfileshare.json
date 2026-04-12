@@ -1,0 +1,15 @@
+{
+  "rule_title": "Mass file share attempted access",
+  "description": "Detected 5 fileshare access events within 60 seconds.",
+  "logic": "AND",
+  "severity": "medium",
+  "threshold": 5,
+  "window_seconds": 60,
+  "detection": [
+    {
+      "field": "EventID",
+      "op": "eq",
+      "value": "5145"
+    }
+  ]
+}

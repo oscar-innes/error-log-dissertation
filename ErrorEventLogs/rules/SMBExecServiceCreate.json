@@ -1,0 +1,92 @@
+  {
+    "rule_title": "TTP T1569.002 - SMBExec: Service Create-Execute-Delete Lifecycle (Sysmon)",
+    "description": "Correlates the full SMBExec service lifecycle: service registration with Start type set to demand-start (0x03), followed by creation of the execute.bat relay file by cmd.exe, followed by the service being marked as disabled (0x04) for cleanup. This three-step sequence within seconds is highly specific to SMBExec command execution.",
+    "threshold": 1,
+    "window_seconds": 100,
+    "logic": "AND",
+    "severity": "critical",
+    "detection": [
+      {
+        "field": "EventID",
+        "op": "eq",
+        "value": "13"
+      },
+      {
+        "field": "ED_EventType",
+        "op": "eq",
+        "value": "SetValue"
+      },
+      {
+        "field": "ED_TargetObject",
+        "op": "contains",
+        "value": "\\Services\\"
+      },
+      {
+        "field": "ED_TargetObject",
+        "op": "endswith",
+        "value": "\\Start"
+      },
+      {
+        "field": "ED_Details",
+        "op": "contains",
+        "value": "0x00000003"
+      },
+      {
+        "field": "ED_Image",
+        "op": "endswith",
+        "value": "\\services.exe"
+      }
+    ],
+    "steps": [
+      {
+        "step": 1,
+        "detection": [
+          {
+            "field": "EventID",
+            "op": "eq",
+            "value": "11"
+          },
+          {
+            "field": "ED_TargetFilename",
+            "op": "regex",
+            "value": "\\.(bat|cmd)"
+          },
+          {
+            "field": "ED_Image",
+            "op": "endswith",
+            "value": "\\cmd.exe"
+          }
+        ]
+      },
+      {
+        "step": 2,
+        "detection": [
+          {
+            "field": "EventID",
+            "op": "eq",
+            "value": "13"
+          },
+          {
+            "field": "ED_EventType",
+            "op": "eq",
+            "value": "SetValue"
+          },
+          {
+            "field": "ED_TargetObject",
+            "op": "endswith",
+            "value": "\\Start"
+          },
+          {
+            "field": "ED_Details",
+            "op": "eq",
+            "value": "DWORD (0x00000004)"
+          },
+          {
+            "field": "ED_Image",
+            "op": "endswith",
+            "value": "\\services.exe"
+          }
+        ]
+      }
+    ]
+  }

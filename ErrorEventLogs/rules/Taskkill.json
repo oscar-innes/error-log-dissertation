@@ -1,0 +1,23 @@
+{
+  "rule_title": "T1562.001 - Impair Defenses - Taskkill Used to Terminate Security or Monitoring Processes",
+  "description": "Detects the use of taskkill.exe or tskill.exe to forcefully terminate security tools, EDR agents, SIEM forwarders, or monitoring software. Adversaries use this technique to blind defenses prior to executing malicious payloads.",
+  "severity": "high",
+  "logic": "AND",
+  "detection": [
+    {
+      "field": "EventID",
+      "op": "in",
+      "value": ["4688", "1"]
+    },
+    {
+      "field": "ED_Image",
+      "op": "regex",
+      "value": ".*\\\\(taskkill|tskill)\\.exe$"
+    },
+    {
+      "field": "ED_CommandLine",
+      "op": "regex",
+      "value": "(?i).*(\/F|\/IM|\/PID|\/T).*"
+    }
+]
+}

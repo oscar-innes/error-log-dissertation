@@ -1,0 +1,20 @@
+{
+    "rule_title": "TTP 1003.006 - DCSync Attack via Directory Replication by Non-DC Account (EID 4662)",
+    "description": "Detects DCSync credential dumping via EID 4662 — a non-machine account accessing the domainDNS partition (ObjectType 19195a5b) with DS-Replication-Get-Changes GUIDs. GUID 1131f6aa is DS-Replication-Get-Changes and 1131f6ad is DS-Replication-Get-Changes-In-Filtered-Set — together they grant full password hash replication rights. SubjectUserName not ending in '$' excludes legitimate DC-to-DC replication (which always authenticates as a machine account).",
+    "logic": "AND",
+      "severity": "critical",
+    "detection": [
+      { "field": "EventID", "op": "eq", "value": "4662" },
+      { "field": "Channel", "op": "eq", "value": "Security" },
+      { "field": "ED_ObjectServer", "op": "eq", "value": "DS" },
+      { "field": "ED_ObjectType", "op": "eq", "value": "%{19195a5b-6da0-11d0-afd3-00c04fd930c9}" },
+      { "field": "ED_SubjectUserName", "op": "not_endswith", "value": "$" },
+      { "field": "ED_Properties", "op": "contains_any", "value": [
+          "1131f6aa-9c07-11d1-f79f-00c04fc2dcd2",
+          "1131f6ab-9c07-11d1-f79f-00c04fc2dcd2",
+          "1131f6ad-9c07-11d1-f79f-00c04fc2dcd2"
+        ]
+      }
+      
+    ]
+  }

@@ -1,0 +1,15 @@
+{
+    "rule_title": "TTP 1003.002 - Mimikatz SAM Dump: Bulk SAM_USER Handle Burst via lsass.exe (EID 4661)",
+    "description": "Detects Mimikatz lsadump::sam iterating all SAM user objects. The pattern is a high-volume burst of EID 4661 events with ObjectType SAM_USER, ObjectServer 'Security Account Manager', where ProcessName is lsass.exe acting on behalf of a non-machine SubjectUserName. Each SAM_USER access corresponds to one account's password hash being read. Normal SAM access involves 1-2 objects; Mimikatz accessing an entire domain produces 50+ SAM_USER events within seconds.",
+    "logic": "AND",
+    "threshold": 20,
+    "window_seconds": 30,
+    "detection": [
+      { "field": "EventID", "op": "eq", "value": "4661" },
+      { "field": "Channel", "op": "eq", "value": "Security" },
+      { "field": "ED_ObjectServer", "op": "eq", "value": "Security Account Manager" },
+      { "field": "ED_ObjectType", "op": "eq", "value": "SAM_USER" },
+      { "field": "ED_ProcessName", "op": "eq", "value": "C:\\Windows\\System32\\lsass.exe" },
+      { "field": "ED_SubjectUserName", "op": "not_endswith", "value": "$" }
+    ]
+  }

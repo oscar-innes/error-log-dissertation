@@ -1,0 +1,27 @@
+{
+    "rule_title": "TTP 1546.003 - WMI Filter and Consumer Created by Same User Within Short Window",
+    "description": "Detects the complete WMI persistence registration sequence — filter creation (EID 19) followed immediately by consumer creation (EID 20) by the same user. The binding (EID 21) completes the subscription. All three events within seconds is the PowerLurk and similar tool fingerprint.",
+    "logic": "AND",
+    "severity": "high",
+    "threshold": 1,
+    "window_seconds": 30,
+    "detection": [
+      { "field": "Channel", "op": "eq", "value": "Microsoft-Windows-Sysmon/Operational" },
+      { "field": "EventID", "op": "eq", "value": "19" },
+        { "field": "Operation", "op": "eq", "value": "Created" },
+        { "field": "ED_Operation", "op": "eq", "value": "Created" }
+    ],
+    "steps": [
+        {
+        "step": 1,
+        "detection": [
+          { "field": "EventID", "op": "eq", "value": "20" },
+          { "field": "Channel", "op": "eq", "value": "Microsoft-Windows-Sysmon/Operational" },
+          { "field": "ED_Operation", "op": "eq", "value": "Created" },
+          { "field": "ED_User", "op": "in", "value": ["Command Line", "Active Script"] }
+        ]
+      }
+    ]
+}
+
+    

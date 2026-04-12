@@ -1,0 +1,33 @@
+{
+  "rule_title": "TTP — Edge based command line payload download (potentially)",
+  "description": "Command Line based use of edge to download something, flag as suspicious but not neccessarily evil.",
+  "logic": "AND",
+  "severity": "medium",
+  "detection": [
+    {
+      "field": "EventID",
+      "op": "eq",
+      "value": "4688"
+    },
+    {
+      "field": "Channel",
+      "op": "eq",
+      "value": "Security"
+    },
+    {
+      "field": "ED_CommandLine",
+      "op": "regex",
+      "value": "(?i)(https?|ftp)://"
+    },
+    {
+      "field": "ED_ParentProcessName",
+      "op": "in",
+      "value": ["cmd.exe", "powershell.exe"]
+    },
+    {
+      "field": "ED_NewProcessName",
+      "op": "contains",
+      "value": "msedge.exe"
+    }
+  ]
+}

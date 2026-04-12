@@ -1,0 +1,15 @@
+{
+    "rule_title": "TTP 1110 - Kerberos Brute Force Against Valid Account (EID 4771 Burst)",
+    "description": "Detects automated Kerberos password brute forcing against a confirmed-valid domain account. EID 4771 only fires when the account exists — Status 0x18 is wrong password, TargetSid being a real SID (not S-1-0-0) confirms the account is present in the directory. A burst of 10+ failures for the same TargetUserName from the same IP within 30 seconds is the Kerbrute/Rubeus single-account brute force pattern.",
+    "logic": "AND",
+    "severity": "high",
+    "threshold": 10,
+    "window_seconds": 30,
+    "detection": [
+      { "field": "EventID", "op": "eq", "value": "4771" },
+      { "field": "Channel", "op": "eq", "value": "Security" },
+      { "field": "ED_Status", "op": "eq", "value": "0x00000018" },
+      { "field": "ED_PreAuthType", "op": "eq", "value": "2" },
+      { "field": "ED_TargetSid", "op": "not_eq", "value": "S-1-0-0" }
+    ]
+  }

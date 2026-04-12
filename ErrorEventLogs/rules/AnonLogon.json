@@ -1,0 +1,12 @@
+{
+    "rule_title": "TTP 1003 - Anonymous NTLM Logon with Domain Specified (DonPapi Fingerprint)",
+    "description": "Anonymous logon used.",
+    "logic": "AND",
+      "severity": "medium",
+    "detection": [
+      { "field": "EventID", "op": "eq", "value": "4624" },
+      { "field": "Channel", "op": "eq", "value": "Security" },
+      { "field": "ED_TargetUserSid", "op": "eq", "value": "S-1-5-7" },
+      { "field": "ED_LogonType", "op": "eq", "value": "3" }
+    ]
+  }

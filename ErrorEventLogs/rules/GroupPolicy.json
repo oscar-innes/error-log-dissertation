@@ -1,0 +1,25 @@
+{
+  "rule_title": "TTP T1484.001 - Group Policy object modified in Active Directory",
+  "description": "Detects creation of a new trusted domain relationship (Event 4706). In the observed data, Administrator on MYPARTNER created a bidirectional forest trust (TdoDirection=3, TdoAttributes=8) with rootblue.lan, with SID filtering disabled. This enables cross-forest lateral movement and is a high-severity persistence/escalation technique.",
+  "logic": "AND",
+  "severity": "high",
+  "threshold": 10,
+  "window_seconds": 60,
+  "detection": [
+    {
+      "field": "EventID",
+      "op": "eq",
+      "value": "5136"
+    },
+    {
+      "field": "Channel",
+      "op": "eq",
+      "value": "Security"
+    },
+    {
+      "field": "ED_ObjectClass",
+      "op": "eq",
+      "value": "groupPolicyContainer"
+    }
+  ]
+}

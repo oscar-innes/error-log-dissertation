@@ -1,0 +1,24 @@
+{
+  "rule_title": "TTP T1059.001 - PowerShell + CMD GzipStream + Base64 decompression cradle in command line",
+  "description": "Detects Event 4697 (service installed) where the ServiceFileName contains the Metasploit signature pattern: %COMSPEC% launching powershell with -nop -w hidden and a GzipStream/FromBase64String decompression cradle.",
+  "logic": "OR",
+    "severity": "high",
+  "detection": [
+    {
+      "logic": "AND",
+      "detection": [
+        { "field": "EventID", "op": "eq", "value": "4697" },
+        { "field": "ED_ServiceFileName", "op": "contains", "value": "FromBase64String" },
+        { "field": "ED_ServiceFileName", "op": "contains", "value": "GzipStream" }
+      ]
+    },
+    {
+      "logic": "AND",
+      "detection": [
+        { "field": "EventID", "op": "eq", "value": "4688" },
+        { "field": "ED_CommandLine", "op": "contains", "value": "FromBase64String" },
+        { "field": "ED_CommandLine", "op": "contains", "value": "GzipStream" }
+      ]
+    }
+  ]
+}

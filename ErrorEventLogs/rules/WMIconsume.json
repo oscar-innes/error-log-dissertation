@@ -1,0 +1,23 @@
+ {
+    "rule_title": "T1546.003 - WMI Consumer Execution via CommandLineEventConsumer",
+    "description": "Detects process creation events where cmd.exe or powershell.exe is spawned by WmiPrvSE.exe, indicating a WMI event subscription has triggered and executed its consumer payload.",
+    "severity": "critical",
+    "logic": "AND",
+    "detection": [
+      {
+        "field": "EventID",
+        "op": "eq",
+        "value": "4688"
+      },
+      {
+        "field": "ED_ParentProcessName",
+        "op": "regex",
+        "value": "(?i)WmiPrvSE\\.exe$"
+      },
+      {
+        "field": "ED_NewProcessName",
+        "op": "regex",
+        "value": "(?i)(cmd\\.exe|powershell\\.exe|wscript\\.exe|cscript\\.exe|mshta\\.exe)$"
+      }
+    ]
+  }

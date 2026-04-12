@@ -1,0 +1,18 @@
+{
+    "rule_title": "TTP 1201 - Domain Trust Discovery via nltest",
+    "description": "Detects domain trust enumeration using nltest, used to map trust relationships between domains and forests — critical for identifying lateral movement paths to other domains.",
+    "logic": "AND",
+    "severity": "medium",
+    "detection": [
+      { "field": "EventID", "op": "eq", "value": "4688" },
+      { "field": "Channel", "op": "eq", "value": "Security" },
+      { "field": "ED_NewProcessName", "op": "endswith", "value": "\\nltest.exe" },
+      { "field": "ED_CommandLine", "op": "contains_any", "value": [
+          "/domain_trusts",
+          "/dclist",
+          "/dsgetdc",
+          "/trusted_domains"
+        ]
+      }
+    ]
+  }

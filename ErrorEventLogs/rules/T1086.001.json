@@ -1,0 +1,38 @@
+{
+    "rule_title": "ID1-WMI spwaning PowerShell process - WMImplant.evtx",
+    "description": "Detects WMI command execution, which may indicate malicious activity or lateral movement.",
+    "logic": "AND",
+    "severity": "high",
+    "detection": [
+        {
+            "field": "EventID",
+            "op": "equals",
+            "value": "1"
+        },
+        {
+            "field": "Channel",
+            "op": "equals",
+            "value": "Microsoft-Windows-Sysmon/Operational"
+        },
+        {
+          "field": "ED_ParentImage",
+          "op": "endswith",
+          "value": "\\WmiPrvSE.exe"
+        },
+        {
+          "field": "ED_Image",
+          "op": "endswith_any",
+          "values": [
+            "\\cmd.exe",
+            "\\powershell.exe",
+            "\\cscript.exe",
+            "\\wscript.exe",
+            "\\mshta.exe",
+            "\\rundll32.exe",
+            "\\regsvr32.exe",
+            "\\bitsadmin.exe"
+          ]
+        }
+    ]
+}
+

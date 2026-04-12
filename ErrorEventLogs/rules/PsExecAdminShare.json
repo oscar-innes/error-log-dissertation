@@ -1,0 +1,33 @@
+{
+  "rule_title": "TTP 1021.002 - PsExec Remote Execution via SMB Admin Share",
+  "description": "Detects PsExec remote execution via its actual event sequence: PSEXESVC.exe written to ADMIN$, followed by the PSEXESVC service being installed (EID 4697), and the PSEXESVC named pipe opened on IPC$. The stdin/stdout/stderr pipe creation is the final confirmation of an active interactive session. Note: the svcctl named pipe pattern belongs to Impacket services.py, not PsExec.",
+  "logic": "AND",
+  "severity": "high",
+  "threshold": 1,
+  "window_seconds": 30,
+  "detection": [
+    { "field": "Channel", "op": "eq", "value": "Security" },
+    { "field": "EventID", "op": "eq", "value": "5145" },
+    { "field": "ED_ShareName", "op": "endswith", "value": "\\ADMIN$" },
+    { "field": "ED_RelativeTargetName", "op": "eq", "value": "PSEXESVC.exe" }
+  ],
+  "steps": [
+
+    {
+      "step": 1,
+      "description": "PSEXESVC service installed on target",
+      "detection": [
+        { "field": "EventID", "op": "eq", "value": "4697" },
+        { "field": "ED_ServiceName", "op": "eq", "value": "PSEXESVC" }
+      ]
+    },
+    {
+      "step": 1,
+      "description": "PSEXESVC named pipe opened on IPC$ — interactive session established",
+      "detection": [
+        { "field": "EventID", "op": "eq", "value": "5145" },
+        { "field": "ED_RelativeTargetName", "op": "startswith", "value": "PSEXESVC" }
+      ]
+    }
+  ]
+}

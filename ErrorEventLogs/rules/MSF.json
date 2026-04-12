@@ -1,0 +1,13 @@
+{
+  "rule_title": "TTP 1569.002 - Metasploit Service Execution Payload Deployed",
+  "description": "Detects Metasploit deploying a payload via a transient service using the hardcoded psexec/service execution module template. The ServiceFileName always begins with %COMSPEC% /b /c start /b /min powershell.exe -nop -w hidden -noni, runs as LocalSystem with demand-start, and uses a random short service name. The PowerShell body contains a GZip-compressed Base64 stager payload.",
+  "logic": "AND",
+  "severity": "critical",
+  "detection": [
+    { "field": "EventID", "op": "in", "value": ["4697", "7045"] },
+    { "field": "Channel", "op": "in", "value": ["Security", "System"] },
+    { "field": "ED_ServiceFileName", "op": "contains", "value": "%COMSPEC%" },
+    { "field": "ED_ServiceFileName", "op": "contains", "value": "-nop -w hidden -noni" },
+    { "field": "ED_ServiceAccount", "op": "eq", "value": "LocalSystem" }
+  ]
+}

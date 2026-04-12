@@ -1,0 +1,23 @@
+{
+    "rule_title": "TTP 1053.002 - Remote Task Creation via ATexec",
+    "description": "Detects remote scheduled task creation via the atsvc named pipe, a known signature of Impacket ATexec.",
+    "logic": "AND",
+      "severity": "high",
+    "detection": [
+      {
+        "field": "EventID",
+        "op": "eq",
+        "value": "5145"
+      },
+      {
+        "field": "RelativeTargetName",
+        "op": "eq",
+        "value": "atsvc"
+      },
+      {
+        "field": "AccessMask",
+        "op": "eq",
+        "value": "0x3"
+      }
+    ]
+}

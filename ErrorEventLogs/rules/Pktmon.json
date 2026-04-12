@@ -1,0 +1,12 @@
+{
+    "rule_title": "TTP for Pktmon.exe Abuse for traffic sniffing.",
+    "description": "Detects WMIImplant writing to CrashControl registry keys via wmiprvse.exe. WMIImplant abuses the CrashControl hive as covert storage for exfiltrated data — network config, system info, and command output are encoded and written to values like DumpFile. wmiprvse.exe has no legitimate reason to modify CrashControl settings.",
+    "logic": "AND",
+    "severity": "low",
+    "detection": [
+      { "field": "EventID", "op": "eq", "value": "4668" },
+      { "field": "Channel", "op": "eq", "value": "Security" },
+      { "field": "ED_NewProcessName", "op": "endswith", "value": "\\PktMon.exe" },
+      { "field": "ED_CommandLine", "op": "contains", "value": "ptkmon" }
+    ]
+  }

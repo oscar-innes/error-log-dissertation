@@ -1,0 +1,17 @@
+ {
+    "rule_title": "TTP T1098 - AdminSDHolder nTSecurityDescriptor modified",
+    "description": "Detects Event 5136 where the nTSecurityDescriptor attribute is modified on the AdminSDHolder container (CN=AdminSDHolder,CN=System). AdminSDHolder's ACL is propagated by SDProp every 60 minutes to all protected AD objects (Domain Admins, Enterprise Admins, etc.). Backdooring AdminSDHolder gives the attacker persistent permissions on every privileged group and account in the domain — even if removed from those objects directly",
+    "logic": "AND",
+    "severity": "high",
+    "detection": [
+      { "field": "EventID", "op": "eq", "value": 5136 },
+      { "field": "Channel", "op": "eq", "value": "Security"
+        
+      },
+      { "field": "ED_ObjectDN", "op": "contains", "value": [
+          "CN=AdminSDHolder,CN=System"
+        ]
+      },
+      { "field": "ED_AttributeLDAPDisplayName", "op": "eq", "value": "nTSecurityDescriptor" }
+    ]
+  }

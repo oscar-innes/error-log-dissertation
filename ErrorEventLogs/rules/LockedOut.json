@@ -1,0 +1,10 @@
+{
+    "rule_title": "TTP T1110 - Account lockout triggered (potential brute force activity)",
+    "description": "Detects Event 4740 (user account locked out). Lockouts are a direct indicator of ongoing brute force activity. Correlate with 4625 events for source IP and timing.",
+    "logic": "AND",
+    "severity": "high",
+    "detection": [
+      { "field": "EventID", "op": "eq", "value": "4740" },
+      { "field": "Channel", "op": "eq", "value": "Security" }
+    ]
+  }

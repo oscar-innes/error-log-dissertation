@@ -1,0 +1,24 @@
+
+  {
+    "rule_title": "T1027/T1059.001 - Obfuscated PowerShell Execution - Hidden Window with Encoded Command",
+    "description": "Detects PowerShell launched with the classic obfuscation trifecta: hidden window (-w hidden or -WindowStyle hidden), execution policy bypass (-ep bypass or -ExecutionPolicy Bypass), and a base64 encoded command (-enc or -EncodedCommand). Commonly used as a loader stage.",
+    "severity": "high",
+    "logic": "AND",
+    "detection": [
+      {
+        "field": "EventID",
+        "op": "eq",
+        "value": "4104"
+      },
+      {
+        "field": "ED_ScriptBlockText",
+        "op": "regex",
+        "value": "(?i)powershell(\\.exe)?.*(-w\\s+hid|-WindowStyle\\s+hid)"
+      },
+      {
+        "field": "ED_ScriptBlockText",
+        "op": "regex",
+        "value": "(?i)(-enc\\s+|-EncodedCommand\\s+)[A-Za-z0-9+/=]{20,}"
+      }
+    ]
+  }

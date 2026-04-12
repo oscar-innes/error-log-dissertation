@@ -1,0 +1,23 @@
+{
+  "rule_title": "TTP T1543.003 - Service installed with suspicious executable path",
+  "description": "Detects Event 7045 where the service ImagePath points to Temp, AppData, Public, or ProgramData directories — locations commonly used by attackers to stage payloads.",
+  "logic": "AND",
+  "severity": "high",
+  "detection": [
+    {
+      "field": "EventID",
+      "op": "eq",
+      "value": "7045"
+    },
+    {
+      "field": "Channel",
+      "op": "eq",
+      "value": "System"
+    },
+    {
+      "field": "ED_ImagePath",
+      "op": "regex",
+      "value": "(\\Temp\\|\\AppData\\|\\Public\\|\\ProgramData\\|powershell|cmd\\.exe|%COMSPEC%)"
+    }
+  ]
+}

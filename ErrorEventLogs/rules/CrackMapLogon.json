@@ -1,0 +1,33 @@
+{
+    "rule_title": "CrackMapExec Logon",
+    "description": "Detects suspicious logon events associated with CrackMapExec, which may indicate malicious activity.",
+    "severity": "high",
+    "logic": "AND",
+    "detection": [
+      {
+        "field": "EventID",
+        "op": "eq",
+        "value": "4674"
+      },
+      {
+        "field": "Channel",
+        "op": "eq",
+        "value": "Security"
+      },
+      {
+        "field": "ED_ObjectType",
+        "op": "eq",
+        "value": "SC_MANAGER OBJECT"
+      },
+      {
+        "field": "ED_ObjectName",
+        "op": "eq",
+        "value": "ServicesActive"
+      },
+      {
+        "field": "ED_ProcessName",
+        "op": "endswith",
+        "value": "\\services.exe"
+      }
+    ]
+  }

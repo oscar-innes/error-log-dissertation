@@ -1,0 +1,15 @@
+{
+  "rule_title": "Credential Access: Brute Force Attempt",
+  "description": "Detected 5+ failed logons within 60 seconds.",
+  "logic": "AND",
+  "severity": "high",
+  "threshold": 5,
+  "window_seconds": 60,
+  "detection": [
+    {
+      "field": "EventID",
+      "op": "eq",
+      "value": "4625"
+    }
+  ]
+}

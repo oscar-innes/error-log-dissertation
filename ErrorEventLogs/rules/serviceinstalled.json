@@ -1,0 +1,18 @@
+ {
+    "rule_title": "TTP 1543.003 - New Service Installed",
+    "description": "Detects installation of a new Windows service. EID 4697 (Security) and 7045 (System) both record service creation. Attacker-installed services frequently run from temp paths, user-writable directories, or use names mimicking legitimate services.",
+    "logic": "AND",
+    "severity": "medium",
+    "detection": [
+      { "field": "EventID", "op": "in", "value": ["4697", "7045"] },
+      { "field": "Channel", "op": "in", "value": ["Security", "System"] },
+      { "field": "ED_ServiceFileName", "op": "in", "value": [
+          "\\Temp\\",
+          "\\AppData\\",
+          "\\ProgramData\\",
+          "\\Users\\",
+          "\\Desktop\\"
+        ]
+      }
+    ]
+  }

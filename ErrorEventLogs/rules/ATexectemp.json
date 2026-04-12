@@ -1,0 +1,28 @@
+{
+    "rule_title": "TTP 1053.002 - Remote Task Creation via ATexec",
+    "description": "Detects Event 4698 (task created) where the TaskContent XML shows cmd.exe /C with output redirected to a .tmp file in the Windows Temp directory. ",
+    "logic": "AND",
+      "severity": "high",
+    "detection": [
+      {
+        "field": "EventID",
+        "op": "eq",
+        "value": "4698"
+      },
+      {
+        "field": "ED_TaskContent",
+        "op": "contains",
+        "value": "cmd.exe"
+      },
+      {
+        "field": "ED_TaskContent",
+        "op": "regex",
+        "value": "%windir%\\Temp\\.*\\.tmp"
+      },
+      {
+        "field": "ED_TaskContent",
+        "op": "contains",
+        "value": "HighestAvailable"
+      }
+    ]
+}

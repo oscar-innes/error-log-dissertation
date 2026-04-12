@@ -1,0 +1,16 @@
+{
+    "rule_title": "TTP T1546.008 - IFEO debugger set for sethc.exe (sticky keys backdoor)",
+    "description": "Detects reg.exe creating or modifying the Image File Execution Options Debugger value for sethc.exe, pointing it to cmd.exe. This is the classic sticky keys backdoor — pressing Shift 5 times at the login screen spawns a SYSTEM command prompt instead of the accessibility dialog. In the observed data, reg.exe set HKLM\\...\\IFEO\\sethc.exe\\Debugger = C:\\windows\\system32\\cmd.exe.",
+    "logic": "AND",
+    "severity": "medium",
+    "detection": [
+      { "field": "EventID", "op": "eq", "value": "13" },
+      { "field": "Channel", "op": "eq", "value": "Microsoft-Windows-Sysmon/Operational" },
+      { "field": "ED_EventType", "op": "eq", "value": "SetValue" },
+      { "field": "ED_TargetObject", "op": "contains", "value": "\\sethc.exe" },
+      { "field": "ED_TargetObject", "op": "endswith", "value": "\\Debugger" },
+      { "field": "ED_Details", "op": "contains", "value": "cmd.exe" }
+    ]
+      }
+      
+ 

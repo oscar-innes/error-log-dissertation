@@ -1,0 +1,28 @@
+{
+    "rule_title": "TTP T1053.005 - SMBExec: scheduled task executing batch file from Windows Temp",
+    "description": "Detects Event 4698 (task created) where the TaskContent XML shows a command executing a .bat file from the Windows Temp directory, running as SYSTEM (S-1-5-18). The observed task 'smbservice' ran C:\\WINDOWS\\Temp\\MpCmdRun.bat — a disguised batch relay.",
+    "severity": "critical",
+    "logic": "AND",
+    "detection": [
+      {
+        "field": "EventID",
+        "op": "eq",
+        "value": "4698"
+      },
+      {
+        "field": "ED_TaskContent",
+        "op": "contains",
+        "value": "\\Temp\\"
+      },
+      {
+        "field": "ED_TaskContent",
+        "op": "regex",
+        "value": "\\.(bat|cmd)"
+      },
+      {
+        "field": "ED_TaskContent",
+        "op": "contains",
+        "value": "S-1-5-18"
+      }
+    ]
+}

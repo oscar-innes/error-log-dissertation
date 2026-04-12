@@ -1,0 +1,47 @@
+{
+  "rule_title": "TTP 1486 - BitLocker Encryption Activated on System Volume",
+  "description": "Detects BitLocker being enabled and fully provisioned on a volume, identified by the sequence of encryption start (796), key protector addition (775), conversion start (780), and conversion completion (793) in the BitLocker Management log. When observed outside of an approved change window or on non-standard hosts, this pattern is consistent with ransomware or destructive actors abusing BitLocker as an encryption primitive (e.g. LockBit, AvosLocker).",
+  "logic": "AND",
+  "severity": "critical",
+  "threshold": 1,
+  "window_seconds": 300,
+  "detection": [
+    {
+      "field": "Channel",
+      "op": "eq",
+      "value": "Microsoft-Windows-BitLocker/BitLocker Management"
+    }
+  ],
+  "steps": [
+    {
+      "step": 1,
+      "detection": [
+        { "field": "EventID", "op": "eq", "value": "796" }
+      ]
+    },
+    {
+      "step": 2,
+      "detection": [
+        { "field": "EventID", "op": "eq", "value": "840" }
+      ]
+    },
+    {
+      "step": 3,
+      "detection": [
+        { "field": "EventID", "op": "eq", "value": "775" }
+      ]
+    },
+    {
+      "step": 4,
+      "detection": [
+        { "field": "EventID", "op": "eq", "value": "780" }
+      ]
+    },
+    {
+      "step": 5,
+      "detection": [
+        { "field": "EventID", "op": "eq", "value": "793" }
+      ]
+    }
+  ]
+}

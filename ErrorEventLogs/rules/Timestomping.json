@@ -1,0 +1,12 @@
+{
+    "rule_title": "TTP T1070.006 - Mass file timestamp manipulation (timestomping)",
+    "description": "Detects a burst of Sysmon Event 2 (FileCreateTimeChanged) events from a single process modifying the creation time of every file it dropped to evade forensic timeline analysis. ",
+    "logic": "AND",
+    "severity": "high",
+    "threshold": 50,
+    "window_seconds": 60,
+    "detection": [
+      { "field": "EventID", "op": "eq", "value": "2" },
+      { "field": "Channel", "op": "eq", "value": "Microsoft-Windows-Sysmon/Operational" }
+    ]
+  }

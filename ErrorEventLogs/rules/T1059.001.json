@@ -1,0 +1,22 @@
+
+{
+    "rule_title": "T1059.001 - PowerShell with Encoded Command",
+    "description": "Detects PowerShell execution using encoded commands to hide intent.",
+    "logic": "AND",
+    "severity": "medium",
+    "detection": [
+      {
+        "field": "EventID",
+        "op": "in",
+        "value": ["4688", "1", "4104"]
+      },
+      {
+        "field": "ED_CommandLine",
+        "op": "in",
+        "value": ["-enc", "-encodedcommand", "-e "]
+      }
+    ]
+}
+
+
+  

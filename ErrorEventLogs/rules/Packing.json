@@ -1,0 +1,26 @@
+{
+    "rule_title": "T1059.001 - Temp/AppData Executable Spawning System Utilities",
+    "description": "Detects an executable running from a user-writable directory (Temp/AppData) spawning a shell (CMD/PowerShell), a system utility (netsh/certutil), or another executable. This is a common pattern for malware persistence, defense evasion, and lateral movement.",
+    "severity": "high",
+    "logic": "AND",
+    "detection": [
+      {
+        "field": "EventID",
+        "op": "in",
+        "value": [
+          "1",
+          "4688"
+        ]
+      },
+      {
+        "field": "ED_ParentImage",
+        "op": "regex",
+        "value": ".*\\\\(Temp|AppData)\\\\.*\\.exe$"
+      },
+      {
+        "field": "ED_Image",
+        "op": "regex",
+        "value": ".*\\\\(cmd\\.exe|powershell\\.exe|pwsh\\.exe|netsh\\.exe|certutil\\.exe|bitsadmin\\.exe|csc\\.exe|mshta\\.exe|wscript\\.exe|cscript\\.exe|.*\\.exe)$"
+      }
+    ]
+  }

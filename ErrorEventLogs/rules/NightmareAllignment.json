@@ -1,0 +1,11 @@
+{
+    "rule_title": "TTP T1068 - PrintNightmare: remote printer connection referencing mimispool driver via UNC path",
+    "description": "Detects creation of a new scheduled task via the Security log. Covers both interactive and programmatic creation. EID 4698 is the primary signal; EID 4702 covers modifications to existing tasks which attackers use to hijack legitimate task binaries.",
+    "logic": "AND",
+    "severity": "critical",
+    "detection": [
+      { "field": "EventID", "op": "in", "value": ["354", "808"] },
+      { "field": "Channel", "op": "eq", "value": "Microsoft-Windows-PrintService/Admin" },
+      { "field": "UD_Param2", "op": "contains", "value": "mimispool.dll" }
+    ]
+  }

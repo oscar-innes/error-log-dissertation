@@ -1,0 +1,11 @@
+ {
+    "rule_title": "TTP Computer Account Created - SeMachineAccountPrivilege",
+    "description": "Finds accounts created as machine level accounts using SeMachineAccountPrivilege. This is a common technique used by attackers to create backdoor accounts that blend in with normal computer accounts. The 4741 EventID indicates a new account was created with this privilege, which allows it to be used as a computer account for domain join or other purposes.",
+    "logic": "AND",
+      "severity": "medium",
+    "detection": [
+      { "field": "EventID", "op": "eq", "value": "4741" },
+      { "field": "Channel", "op": "eq", "value": "Security" },
+      { "field": "ED_CommandLine", "op": "contains", "value": "SeMachineAccountPrivilege" }
+    ]
+  }

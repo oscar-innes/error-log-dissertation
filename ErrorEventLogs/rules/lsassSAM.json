@@ -1,0 +1,23 @@
+{
+    "rule_title": "TTP T1207 - DCShadow: LSASS accessing SAM password-related attributes on domain controller",
+    "description": "Detects Event 4661 where lsass.exe accesses SAM objects (SAM_DOMAIN, SAM_SERVER, SAM_ALIAS) with properties referencing password-related schema GUIDs like {c7407360-20bf-11d0-a768-00aa006e0529} (password property set) and {bf9679a4/a5/a6} (individual password attributes). ",
+    "logic": "AND",
+    "severity": "high",
+    "detection": [
+      {
+        "field": "EventID",
+        "op": "eq",
+        "value": "4611"
+      },
+      {
+        "field": "ED_ObjectServer",
+        "op": "eq",
+        "value": "Security Account Manager"
+      },
+      {
+        "field": "ED_ProcessName",
+        "op": "endswith",
+        "value": "\\lsass.exe"
+      }
+    ]
+}

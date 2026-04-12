@@ -1,0 +1,19 @@
+{
+    "rule_title": "TTP 1518.001 - Firewall Configuration Enumerated via PowerShell",
+    "description": "Detects firewall profile and rule enumeration via PowerShell using Get-NetFirewallProfile, Get-NetFirewallRule, or the older NetSecurity module. Attackers enumerate firewall rules to identify allowed outbound ports before establishing C2 or to find gaps in inbound filtering for lateral movement.",
+    "logic": "AND",
+    "severity": "medium",
+    "detection": [
+      { "field": "EventID", "op": "eq", "value": "4104" },
+      { "field": "Channel", "op": "eq", "value": "Microsoft-Windows-PowerShell/Operational" },
+      { "field": "ED_ScriptBlockText", "op": "contains_any", "value": [
+          "Get-NetFirewallProfile",
+          "Get-NetFirewallRule",
+          "Get-NetFirewallSetting",
+          "Show-NetFirewallRule",
+          "NetSecurity"
+        ]
+      },
+      { "field": "ED_ScriptBlockText","op": "not_contains", "value": "__cmdletization_" }
+    ]
+  }

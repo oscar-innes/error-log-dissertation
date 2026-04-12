@@ -1,0 +1,12 @@
+{
+    "rule_title": "TTP T1070.001 - Event log service stopped or crashed",
+    "description": "Detects Event 7036 in the System log where the Windows Event Log service enters the 'stopped' state. Attackers may kill the event log service to prevent logging.",
+    "logic": "AND",
+    "severity": "medium",
+    "detection": [
+      { "field": "EventID", "op": "eq", "value": "7036" },
+      { "field": "Channel", "op": "eq", "value": "System" },
+    { "field": "ED_param1", "op": "contains", "value": "Windows Event Log" },
+    { "field": "ED_param2", "op": "contains", "value": "stopped" }
+    ]
+  }

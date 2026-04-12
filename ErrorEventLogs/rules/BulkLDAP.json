@@ -1,0 +1,15 @@
+{
+    "rule_title": "TTP 1069.002 - Any Bulk DS Group Object Access Burst (LDAP Enumeration)",
+    "description": "Broader variant catching any tool performing bulk directory service reads on group objects — not just CrackMapExec. A high volume of 4662 events against group class objects from the same logon session in a short window indicates automated LDAP group enumeration regardless of which tool is being used.",
+    "logic": "AND",
+      "severity": "high",
+    "threshold": 30,
+    "window_seconds": 30,
+    "detection": [
+      { "field": "EventID", "op": "eq", "value": "4662" },
+      { "field": "Channel", "op": "eq", "value": "Security" },
+      { "field": "ED_ObjectServer", "op": "eq", "value": "DS" },
+      { "field": "ED_ObjectType", "op": "eq", "value": "%{bf967a9c-0de6-11d0-a285-00aa003049e2}" },
+      { "field": "ED_SubjectUserName", "op": "not_endswith", "value": "$" }
+    ]
+  }

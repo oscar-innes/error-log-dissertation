@@ -1,0 +1,14 @@
+{
+    "rule_title": "TTP 1087.002 - Kerberos TGS Host Enumeration Burst (BloodHound)",
+    "description": "Detects BloodHound/SharpHound enumerating domain hosts by requesting Kerberos service tickets for multiple computer accounts in rapid succession. All ServiceNames end with $ (computer accounts), all from the same source IP and LogonGuid within a short window. This is distinct from Kerberoasting which targets user SPNs — this targets host accounts to map reachable machines.",
+    "logic": "AND",
+    "severity": "medium",
+    "threshold": 10,
+    "window_seconds": 60,
+    "detection": [
+      { "field": "EventID", "op": "eq", "value": "4769" },
+      { "field": "Channel", "op": "eq", "value": "Security" },
+      { "field": "ED_ServiceName", "op": "endswith", "value": "$" }
+
+    ]
+}

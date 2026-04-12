@@ -1,0 +1,12 @@
+{
+    "rule_title": "TTP 1110 - Kerberos Username Enumeration via AS-REQ Without Pre-Auth (Kerbrute)",
+    "description": "Detects Kerbrute-style enumeration where AS-REQs are sent without Kerberos pre-authentication (PreAuthType '-') to probe which usernames exist. Status 0x6 means the username doesn't exist; 0x12 means the account exists but is disabled or expired. Both are valuable to an attacker — 0x6 maps the username namespace and 0x12 identifies dormant accounts. A burst of these across many unique usernames from one IP in under 30 seconds is the definitive automated enumeration fingerprint. TicketEncryptionType 0xffffffff confirms the KDC rejected the request before issuing any ticket.",
+    "logic": "AND",
+    "severity": "medium",
+    "detection": [
+      { "field": "EventID", "op": "in", "value": ["823", "848", "849"] },
+      { "field": "Channel", "op": "in", "value": ["Microsoft-Windows-PrintService/Admin", "Microsoft-Windows-PrintService/Operational"] },
+      { "field": "ED_PrinterName", "op": "contains_any", "value": ["Kiwi", "kiwi"] },
+      { "field": "ED_NewDefaultPrinter", "op": "contains_any", "value": ["Kiwi", "kiwi"] }
+    ]
+  }

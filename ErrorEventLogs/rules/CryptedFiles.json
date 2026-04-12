@@ -1,0 +1,18 @@
+  {
+    "rule_title": "T1486 - Data Encrypted for Impact - Creation of files with encryption extensions",
+    "description": "Detects creation of files with encryption extensions",
+    "severity": "critical",
+    "logic": "AND",
+    "detection": [
+      {
+        "field": "EventID",
+        "op": "eq",
+        "value": "11"
+      },
+      {
+        "field": "ED_TargetFilename",
+        "op": "regex",
+        "value": ".*\\.(WNCRY|WNCRYT|wnry|locky|cerber[0-9]*|ryk|ryuk|lockbit|conti|crypted|encrypted|enc|crypt|pay|paym|payms|ransomware|zzz|xxx|aaa|locked|crinf|r5a|xtbl|vault|ha3|breaking_bad|magic|better_call_saul|cryptolocker|cryptowall|hta|)$"
+      }
+    ]
+  }

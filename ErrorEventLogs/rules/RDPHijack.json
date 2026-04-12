@@ -1,0 +1,33 @@
+{
+  "rule_title": "TTP 1563.002 - RDP Session Hijacking via tscon.exe",
+  "description": "Detects RDP session hijacking using tscon.exe to redirect a disconnected or active session to the attacker's own RDP channel. tscon running as SYSTEM (SubjectUserSid S-1-5-18) with a /dest: argument is the execution fingerprint; the follow-on EID 4778 confirms the victim session was reconnected under the attacker's client. Covers both delivery methods: direct SYSTEM shell execution and service-based execution via sc.exe.",
+  "logic": "AND",
+  "severity": "critical",
+  "threshold": 1,
+  "window_seconds": 60,
+  "detection": [
+    { "field": "EventID", "op": "eq", "value": "4688" },
+    { "field": "Channel", "op": "eq", "value": "Security" },
+    { "field": "ED_NewProcessName", "op": "in", "value": ["tscon.exe", "TSTheme.exe"]},
+    { "field": "ED_CommandLine", "op": "contains", "value": "/dest:" },
+    { "field": "ED_SubjectUserSid", "op": "eq", "value": "S-1-5-18" }
+  ],
+  "steps": [
+    {
+      "step": 1,
+      "detection": [
+        { "field": "EventID", "op": "eq", "value": "4688" },
+        { "field": "ED_NewProcessName", "op": "in", "value": ["tscon.exe", "TSTheme.exe"] },
+        { "field": "ED_CommandLine", "op": "contains", "value": "/dest:" },
+        { "field": "ED_SubjectUserSid", "op": "eq", "value": "S-1-5-18" }
+      ]
+    },
+    {
+      "step": 2,
+      "description": "Victim session reconnects to attacker client confirming successful hijack",
+      "detection": [
+        { "field": "EventID", "op": "in", "value": ["4778, 4779"] }
+      ]
+    }
+    ]
+}

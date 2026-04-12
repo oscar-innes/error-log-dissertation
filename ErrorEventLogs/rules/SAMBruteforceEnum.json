@@ -1,0 +1,16 @@
+
+  {
+    "rule_title": "TTP 1069.001 - Local Group Enumeration via SAM RID Brute Force (CrackMapExec)",
+    "description": "Detects CrackMapExec enumerating local groups by iterating SAM_ALIAS objects via RID brute force. The attack opens a SAM_SERVER handle, then a SAM_DOMAIN handle for the Builtin container, then requests handles to each SAM_ALIAS (local group) object sequentially. A burst of SAM_ALIAS handle opens from a single subject within a short window is the automated RID cycling fingerprint.",
+    "logic": "AND",
+    "severity": "high",
+    "threshold": 10,
+    "window_seconds": 30,
+    "detection": [
+      { "field": "EventID", "op": "eq", "value": "4661" },
+      { "field": "Channel", "op": "eq", "value": "Security" },
+      { "field": "ED_ObjectServer", "op": "eq", "value": "Security Account Manager" },
+      { "field": "ED_ObjectType", "op": "eq", "value": "SAM_ALIAS" },
+      { "field": "ED_SubjectUserName", "op": "not_endswith", "value": "$" }
+    ]
+}

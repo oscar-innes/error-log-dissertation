@@ -1,0 +1,15 @@
+{
+    "rule_title": "TTP T1484.001 - Domain Policy Modified by Non-System Account (EID 4739)",
+    "description": "Detects EID 4739 (domain policy change) where the actor is a named user account rather than SYSTEM or a DC machine account. EID 4739 fires whenever the domain-wide account/password policy, lockout policy, or Kerberos policy is modified. Legitimate changes originate from SYSTEM (S-1-5-18) or DC machine accounts during Group Policy application — never from interactive human accounts directly. A named user modifying domain policy directly indicates either a compromised privileged account or deliberate policy weakening (e.g. reducing password complexity, extending MaxPasswordAge, disabling lockout thresholds) to prepare for brute force or persistence.",
+    "logic": "AND",
+    "detection": [
+      { "field": "EventID", "op": "eq", "value": "4739" },
+      { "field": "Channel", "op": "eq", "value": "Security" },
+      { "field": "ED_SubjectUserSid", "op": "not_contains_any", "value": [
+          "S-1-5-18",
+          "S-1-5-19",
+          "S-1-5-20"
+        ]
+      }
+    ]
+  }

@@ -1,0 +1,17 @@
+{
+    "rule_title": "TTP 1547.001 - Run / RunOnce Registry Key Persistence",
+    "description": "Detects writes to the common autorun registry keys used by attackers to execute payloads on logon or boot. Covers both HKLM (all users) and HKCU (current user) variants and the RunOnce single-execution form.",
+    "logic": "AND",
+    "severity": "medium",
+    "detection": [
+      { "field": "EventID", "op": "in", "value": ["4657", "13", "1", "4688"] },
+      { "field": "Channel", "op": "in", "value": ["Security", "Microsoft-Windows-Sysmon/Operational"] },
+      { "field": "ED_CommandLine", "op": "contains_any", "value": [
+          "\\CurrentVersion\\Run",
+          "\\CurrentVersion\\RunOnce",
+          "\\Start Menu\\Programs\\Startup",
+      "\\Start Menu\\Programs\\StartUp"
+        ]
+      }
+    ]
+  }

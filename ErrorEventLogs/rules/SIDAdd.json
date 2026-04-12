@@ -1,0 +1,9 @@
+{
+  "rule_title": "TTP T1134.005 - SID history added to account",
+  "description": "Detects SID history being added to a user account (Event 4765). In the observed data, Administrator added the Domain Admins group SID (RID 512) as the source SID to user Andrei in the MAINCORP domain. This grants the target account the privileges of Domain Admins without actual group membership — a classic persistence and privilege escalation technique used in cross-domain attacks.",
+  "logic": "AND",
+  "detection": [
+        { "field": "EventID", "op": "eq", "value": "4576" },
+        { "field": "ED_ShareName", "op": "contains", "value": "Security" }
+      ]
+}

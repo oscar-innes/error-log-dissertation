@@ -1,0 +1,20 @@
+{
+    "rule_title": "TTP 1204.002 - Office Application Spawning Child Process",
+    "description": "Detects Microsoft Office applications spawning suspicious child processes like cmd, powershell, or wscript.",
+    "logic": "AND",
+    "severity": "high",
+    "detection": [
+      { "field": "EventID", "op": "in", "value": ["4688", "1"] },
+      {
+        "field": "ED_ParentProcessName",
+        "op": "regex",
+        "value": ".*\\\\(WINWORD|EXCEL|POWERPNT|OUTLOOK)\\.EXE$"
+      },
+      {
+        "field": "ED_NewProcessName",
+        "op": "regex",
+        "value": ".*\\\\(wscript|cscript|powershell|cmd|mshta|regsvr32)\\.exe$"
+      }
+    ]
+}
+

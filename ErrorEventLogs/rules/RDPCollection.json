@@ -1,0 +1,11 @@
+{
+  "rule_title": "TTP 1021.001 - RDP Shadow Session Enabled via Registry (Sysmon)",
+  "description": "Detects creation or modification of the Terminal Services policy registry key used to configure RDP session shadowing. Setting the Shadow DWORD under this key enables silent or interactive observation of another user's RDP session without consent. The use of reg.exe directly rather than GPO is a strong indicator of manual attacker activity.",
+  "logic": "AND",
+  "detection": [
+    { "field": "Channel", "op": "eq", "value": "Microsoft-Windows-Sysmon/Operational" },
+    { "field": "EventID", "op": "eq", "value": "12" },
+    { "field": "ED_EventType", "op": "eq", "value": "CreateKey" },
+    { "field": "ED_TargetObject", "op": "contains", "value": "\\Policies\\Microsoft\\Windows NT\\Terminal Services" }
+  ]
+}

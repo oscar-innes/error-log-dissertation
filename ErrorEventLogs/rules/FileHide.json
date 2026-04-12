@@ -1,0 +1,26 @@
+
+   { "rule_title": "T1070.004 - Self-deletion via cmd ping trick",
+    "description": "Detects the classic self-deletion pattern using cmd.exe with ping and del commands. Uses 'cmd /c ping 127.0.0.1 -n N & del <self>' to delete their own binary after execution.",
+    "severity": "high",
+    "logic": "AND",
+    "detection": [
+      {
+        "field": "EventID",
+        "op": "in",
+        "value": [
+          "1",
+          "4688"
+        ]
+      },
+      {
+        "field": "ED_Image",
+        "op": "endswith",
+        "value": "\\cmd.exe"
+      },
+      {
+        "field": "ED_CommandLine",
+        "op": "regex",
+        "value": ".*ping.*-n.*&.*del.*\\.exe.*"
+      }
+    ]
+  }

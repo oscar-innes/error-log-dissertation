@@ -1,0 +1,26 @@
+  {
+    "rule_title": "T1222.001 — File and Directory Permissions Modifications - icacls grant Everyone:F on current directory",
+    "description": "Detects icacls.exe granting Everyone full control recursively. WannaCry runs 'icacls . /grant Everyone:F /T /C /Q' to ensure it can encrypt all files regardless of existing ACLs.",
+    "severity": "high",
+    "logic": "AND",
+    "detection": [
+      {
+        "field": "EventID",
+        "op": "in",
+        "value": [
+          "1",
+          "4688"
+        ]
+      },
+      {
+        "field": "ED_Image",
+        "op": "endswith",
+        "value": "\\icacls.exe"
+      },
+      {
+        "field": "ED_CommandLine",
+        "op": "contains",
+        "value": "/grant Everyone:F"
+      }
+    ]
+  }

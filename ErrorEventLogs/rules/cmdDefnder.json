@@ -1,0 +1,29 @@
+{
+    "rule_title": "TTP T1562.001 - Defender Feature Disabled via Set-MpPreference (PowerShell Command Line)",
+    "description": "Detects Set-MpPreference being used to disable specific Defender protection features via the PowerShell command line (visible in EID 4688 CommandLine field). This covers feature-level disablement without requiring ScriptBlock logging — the full Set-MpPreference command with its parameter is captured in the process creation event. The parameters seen in this sample (-EnableControlledFolderAccess Disabled, -PUAProtection disable) are two of several critical features attackers commonly turn off. The broader parameter list covers the full range of Set-MpPreference disablement options.",
+    "logic": "AND",
+      "severity": "critical",
+    "detection": [
+      { "field": "EventID", "op": "eq", "value": "4688" },
+      { "field": "Channel", "op": "eq", "value": "Security" },
+      { "field": "ED_NewProcessName", "op": "endswith_any", "value": [
+          "\\powershell.exe",
+          "\\pwsh.exe"
+        ]
+      },
+      { "field": "ED_CommandLine", "op": "contains", "value": "Set-MpPreference" },
+      { "field": "ED_CommandLine", "op": "contains_any", "value": [
+          "DisableRealtimeMonitoring",
+          "DisableIOAVProtection",
+          "DisableBehaviorMonitoring",
+          "DisableBlockAtFirstSeen",
+          "DisableScriptScanning",
+          "DisableAntiSpyware",
+          "EnableControlledFolderAccess Disabled",
+          "PUAProtection disable",
+          "DisableIntrusionPreventionSystem",
+          "DisablePrivacyMode"
+        ]
+      }
+    ]
+  }

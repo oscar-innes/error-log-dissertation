@@ -1,0 +1,13 @@
+{
+    "rule_title": "TTP 1003.003 - NTDS.dit Extraction via NTDSUtil",
+    "description": "Detects the use of ntdsutil.exe to create an Install From Media (IFM) backup, which contains the AD database.",
+    "logic": "AND",
+    "severity": "high",
+      
+    "detection": [
+      { "field": "EventID", "op": "eq", "value": "4688" },
+      { "field": "ED_NewProcessName", "op": "endswith", "value": "\\ntdsutil.exe" },
+      { "field": "ED_CommandLine", "op": "contains", "value": "ifm" },
+      { "field": "ED_CommandLine", "op": "contains", "value": "create" }
+    ]
+}

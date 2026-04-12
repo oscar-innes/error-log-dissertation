@@ -1,0 +1,13 @@
+{
+    "rule_title": "TTP 1087.002 - User Account Enumeration via net user",
+    "description": "Detects targeted user account enumeration using net user to query specific account details both locally and against the domain. The /domain flag escalates to querying the DC. net.exe always spawns net1.exe as a subprocess — both are included. Querying the built-in administrator account by name is a common first step post-compromise.",
+    "logic": "AND",
+    "severity": "low",
+    "detection": [
+          { "field": "EventID", "op": "eq", "value": "4688" },
+          { "field": "Channel", "op": "eq", "value": "Security" },
+          { "field": "ED_NewProcessName", "op": "endswith_any", "value": ["\\net.exe", "\\net1.exe"] },
+          { "field": "ED_CommandLine", "op": "contains", "value": "user" }
+        ]
+        
+}

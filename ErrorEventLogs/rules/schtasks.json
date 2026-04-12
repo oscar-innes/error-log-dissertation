@@ -1,0 +1,33 @@
+{
+    "rule_title": "TTP 1053.005 - Scheduled Task Created with SYSTEM Privileges",
+    "description": "Detects the creation of a scheduled task configured to run as the SYSTEM user via command line.",
+    "logic": "AND",
+    "severity": "high",
+    "detection": [
+      {
+        "field": "EventID",
+        "op": "eq",
+        "value": "4688"
+      },
+      {
+        "field": "Channel",
+        "op": "eq",
+        "value": "Security"
+      },
+      {
+        "field": "ED_NewProcessName",
+        "op": "contains",
+        "value": "schtasks.exe"
+      },
+      {
+        "field": "ED_CommandLine",
+        "op": "contains",
+        "value": "/ru"
+      },
+      {
+        "field": "ED_CommandLine",
+        "op": "contains",
+        "value": "SYSTEM"
+      }
+    ]
+}

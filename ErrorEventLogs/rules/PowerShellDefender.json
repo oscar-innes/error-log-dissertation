@@ -1,0 +1,23 @@
+ {
+    "rule_title": "TTP T1562.001 - Defender Feature Disabled via Set-MpPreference (ScriptBlock Log EID 4104)",
+    "description": "Detects Set-MpPreference disabling Defender features via PowerShell ScriptBlock logging (EID 4104). This rule catches cases where the PowerShell is run non-interactively, via an encoded command, or via a script file where the EID 4688 CommandLine field may be truncated or obfuscated. ScriptBlock logging captures the decoded, fully expanded script text, making it reliable even when the outer invocation uses -EncodedCommand or -File. Complements the EID 4688 rule to provide defence-in-depth coverage.",
+    "logic": "AND",
+    "severity": "high",
+    "detection": [
+      { "field": "EventID", "op": "eq", "value": "4104" },
+      { "field": "ED_ScriptBlockText", "op": "contains", "value": "Set-MpPreference" },
+      { "field": "ED_ScriptBlockText", "op": "contains_any", "value": [
+          "DisableRealtimeMonitoring",
+          "DisableIOAVProtection",
+          "DisableBehaviorMonitoring",
+          "DisableBlockAtFirstSeen",
+          "DisableScriptScanning",
+          "DisableAntiSpyware",
+          "EnableControlledFolderAccess",
+          "PUAProtection",
+          "DisableIntrusionPreventionSystem",
+          "SignatureDisableUpdateOnStartupWithoutEngine"
+        ]
+      }
+    ]
+  }

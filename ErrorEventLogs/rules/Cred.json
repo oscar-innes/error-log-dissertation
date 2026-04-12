@@ -1,0 +1,23 @@
+  {
+    "rule_title": "TTP T1555 - Credential Manager: Web Password Credential Read from Vault",
+    "description": "Detects a Windows Web Password Credential being read from the vault (Event 5382). This event exposes the resource URL and identity (email/username) of stored web credentials, indicating a process retrieved a specific stored password.",
+    "severity": "high",
+    "logic": "AND",
+    "detection": [
+      {
+        "field": "EventID",
+        "op": "eq",
+        "value": "5382"
+      },
+      {
+        "field": "Channel",
+        "op": "eq",
+        "value": "Security"
+      },
+      {
+        "field": "ED_SchemaFriendlyName",
+        "op": "eq",
+        "value": "Windows Web Password Credential"
+      }
+    ]
+  }

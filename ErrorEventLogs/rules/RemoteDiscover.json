@@ -1,0 +1,17 @@
+{
+    "rule_title": "TTP 1018 - Remote System Discovery via net view and ping",
+    "description": "Detects host discovery using net view to enumerate domain computers and ping for reachability checks. Common post-compromise network mapping technique.",
+    "logic": "AND",
+    "severity": "low",
+    "detection": [
+      { "field": "EventID", "op": "eq", "value": "4688" },
+      { "field": "Channel", "op": "eq", "value": "Security" },
+      { "field": "ED_NewProcessName", "op": "endswith_any", "value": ["\\net.exe", "\\net1.exe", "\\ping.exe"] },
+      { "field": "ED_CommandLine", "op": "contains_any", "value": [
+          "view /domain",
+          "view /all",
+          "group \"Domain Computers\""
+        ]
+      }
+    ]
+  }

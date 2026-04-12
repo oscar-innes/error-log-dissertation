@@ -1,0 +1,12 @@
+{
+  "rule_title": "TTP 1490 - VSS Deletion via WMIC or PowerShell",
+  "description": "Detects deletion of Volume Shadow Copies via WMIC command line or PowerShell WMI/CIM calls. Covers both the wmic shadowcopy delete pattern (4688) and PowerShell script block variants (4104/800). Commonly used by ransomware and attackers to prevent file recovery.",
+  "logic": "AND",
+  "severity": "critical",
+  "detection": [
+        { "field": "EventID", "op": "eq", "value": "4104" },
+        { "field": "Channel", "op": "eq", "value": "Microsoft-Windows-PowerShell/Operational" },
+        { "field": "ED_ScriptBlockText", "op": "contains", "value": "Win32_Shadowcopy" },
+        { "field": "ED_ScriptBlockText", "op": "contains", "value": "Delete" }
+      ]
+}

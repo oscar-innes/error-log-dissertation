@@ -1,0 +1,183 @@
+  {
+    "rule_title": "TTP 1070.001 - Windows Event Log Cleared via wevtutil, Clear-EventLog, or PowerShell",
+    "description": "Detects clearing of Windows event logs via wevtutil.exe cl/clear-log, PowerShell Clear-EventLog, or WMI. Attackers clear logs (especially Security, System, and Windows PowerShell) mid-intrusion to destroy evidence of prior activity. Almost never performed by legitimate users on endpoints - log management is done via GPO retention policies or SIEM forwarding, not manual wevtutil calls. The native Security EID 1102 fires when the Security log itself is cleared, but NOT for other logs - command-line detection catches clears of PowerShell, System, Application, and Sysmon channels that attackers frequently target first. Requires Security EID 4688 with command line auditing enabled, or Sysmon EID 1.",
+    "logic": "OR",
+      "severity": "medium",
+    "detection": [
+      {
+        "logic": "AND",
+        "detection": [
+          {
+            "field": "EventID",
+            "op": "eq",
+            "value": "4688"
+          },
+          {
+            "field": "Channel",
+            "op": "eq",
+            "value": "Security"
+          },
+          {
+            "field": "ED_NewProcessName",
+            "op": "contains",
+            "value": "wevtutil.exe"
+          },
+          {
+            "field": "ED_CommandLine",
+            "op": "contains_any",
+            "value": [
+              " cl ",
+              " cl\"",
+              " clear-log",
+              " cl-log"
+            ]
+          }
+        ]
+      },
+      {
+        "logic": "AND",
+        "detection": [
+          {
+            "field": "EventID",
+            "op": "eq",
+            "value": "4688"
+          },
+          {
+            "field": "Channel",
+            "op": "eq",
+            "value": "Security"
+          },
+          {
+            "field": "ED_CommandLine",
+            "op": "contains_any",
+            "value": [
+              "wevtutil cl ",
+              "wevtutil.exe cl ",
+              "wevtutil clear-log",
+              "wevtutil.exe clear-log",
+              "Clear-EventLog",
+              "[System.Diagnostics.Eventing.Reader.EventLogSession]",
+              ".ClearLog(",
+              "Remove-EventLog"
+            ]
+          }
+        ]
+      },
+      {
+        "logic": "AND",
+        "detection": [
+          {
+            "field": "EventID",
+            "op": "eq",
+            "value": "1"
+          },
+          {
+            "field": "Channel",
+            "op": "eq",
+            "value": "Microsoft-Windows-Sysmon/Operational"
+          },
+          {
+            "field": "ED_Image",
+            "op": "contains",
+            "value": "wevtutil.exe"
+          },
+          {
+            "field": "ED_CommandLine",
+            "op": "contains_any",
+            "value": [
+              " cl ",
+              " cl\"",
+              " clear-log",
+              " cl-log"
+            ]
+          }
+        ]
+      },
+      {
+        "logic": "AND",
+        "detection": [
+          {
+            "field": "EventID",
+            "op": "eq",
+            "value": "1"
+          },
+          {
+            "field": "Channel",
+            "op": "eq",
+            "value": "Microsoft-Windows-Sysmon/Operational"
+          },
+          {
+            "field": "ED_CommandLine",
+            "op": "contains_any",
+            "value": [
+              "wevtutil cl ",
+              "wevtutil.exe cl ",
+              "wevtutil clear-log",
+              "wevtutil.exe clear-log",
+              "Clear-EventLog",
+              ".ClearLog(",
+              "Remove-EventLog"
+            ]
+          }
+        ]
+      },
+      {
+        "logic": "AND",
+        "detection": [
+          {
+            "field": "EventID",
+            "op": "eq",
+            "value": "4104"
+          },
+          {
+            "field": "Channel",
+            "op": "eq",
+            "value": "Microsoft-Windows-PowerShell/Operational"
+          },
+          {
+            "field": "ED_ScriptBlockText",
+            "op": "contains_any",
+            "value": [
+              "wevtutil cl ",
+              "wevtutil.exe cl ",
+              "wevtutil clear-log",
+              "Clear-EventLog",
+              "[System.Diagnostics.Eventing.Reader.EventLogSession]",
+              ".ClearLog(",
+              "Remove-EventLog"
+            ]
+          }
+        ]
+      },
+      {
+        "logic": "AND",
+        "detection": [
+          {
+            "field": "EventID",
+            "op": "eq",
+            "value": "1102"
+          },
+          {
+            "field": "Channel",
+            "op": "eq",
+            "value": "Security"
+          }
+        ]
+      },
+      {
+        "logic": "AND",
+        "detection": [
+          {
+            "field": "EventID",
+            "op": "eq",
+            "value": "104"
+          },
+          {
+            "field": "Channel",
+            "op": "eq",
+            "value": "System"
+          }
+        ]
+      }
+    ]
+  }

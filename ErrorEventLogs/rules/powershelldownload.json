@@ -1,0 +1,23 @@
+{
+  "rule_title": "TTP — PowerShell in-memory download cradle (IEX + WebClient)",
+  "description": "Detects PowerShell download cradles that fetch and immediately execute remote content in memory using IEX (Invoke-Expression) combined with Net.WebClient download methods. This technique avoids writing payloads to disk and is widely used in initial access, C2 staging, and lateral movement. Requires PowerShell Script Block Logging (4104) to be enabled. MITRE T1059.001, T1105.",
+  "logic": "AND",
+  "severity": "medium",
+  "detection": [
+    {
+      "field": "EventID",
+      "op": "in",
+      "value": ["4104", "4103"]
+    },
+    {
+      "field": "ED_ScriptBlockText",
+      "op": "regex",
+      "value": "(?i)(IEX|Invoke-Expression).{0,50}(Net\\.WebClient|WebRequest|DownloadString|DownloadFile|WebProxy|Invoke-WebRequest|DownloadData)"
+    },
+    {
+      "field": "ED_ScriptBlockText",
+      "op": "regex",
+      "value": "(?i)(https?|ftp|http)://"
+    }
+  ]
+}

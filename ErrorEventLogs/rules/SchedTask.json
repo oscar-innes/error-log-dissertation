@@ -1,0 +1,28 @@
+  {
+    "rule_title": "T1053.005 - Scheduled Task Created to Run as SYSTEM",
+    "description": "Detects creation of a scheduled task via schtasks.exe configured to run as the SYSTEM account. Commonly abused for privilege escalation and execution as SYSTEM.",
+    "severity": "high",
+    "logic": "AND",
+    "detection": [
+      {
+        "field": "EventID",
+        "op": "eq",
+        "value": "4688"
+      },
+      {
+        "field": "ED_NewProcessName",
+        "op": "endswith",
+        "value": "\\schtasks.exe"
+      },
+      {
+        "field": "ED_CommandLine",
+        "op": "contains_any",
+        "value": [
+          "/create",
+          "/ru",
+           "/delete",
+          "/f"
+        ]
+      }
+    ]
+  }

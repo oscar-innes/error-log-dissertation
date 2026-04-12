@@ -1,0 +1,13 @@
+
+  {
+    "rule_title": "TTP 1136.001 - Local User Account Created via net.exe",
+    "description": "Detects local user account creation using net.exe or net1.exe with the /add flag. net1.exe is always spawned as a child of net.exe for this operation — both processes carry the same command line. The follow-on 4720 confirms account creation in SAM.",
+    "logic": "AND",
+    "severity": "medium",
+    "detection": [
+      { "field": "EventID", "op": "eq", "value": "4688" },
+      { "field": "Channel", "op": "eq", "value": "Security" },
+      { "field": "ED_NewProcessName", "op": "in", "value": ["\\net.exe", "\\net1.exe"] },
+      { "field": "ED_CommandLine", "op": "contains", "value": "/add" }
+    ]
+  }

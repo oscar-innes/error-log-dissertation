@@ -1,0 +1,26 @@
+  {
+    "rule_title": "T1562.004 - netsh firewall add allowedprogram from Temp executable",
+    "description": "Detects netsh.exe being used to add a firewall exception for an executable located in a Temp or AppData directory.",
+    "severity": "critical",
+    "logic": "AND",
+    "detection": [
+      {
+        "field": "EventID",
+        "op": "in",
+        "value": [
+          "1",
+          "4688"
+        ]
+      },
+      {
+        "field": "ED_CommandLine",
+        "op": "contains",
+        "value": "firewall add allowedprogram"
+      },
+      {
+        "field": "ED_CommandLine",
+        "op": "regex",
+        "value": ".*(Temp|AppData).*\\.exe.*"
+      }
+    ]
+  }
