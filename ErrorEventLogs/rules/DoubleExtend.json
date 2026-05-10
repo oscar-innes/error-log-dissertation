@@ -1,0 +1,18 @@
+{
+    "rule_title": "TTP T1036 - Executable Masquerading via Double Extension",
+    "description": "Detects Sysmon Event 11 file creation where a file uses a double extension such as .pdf.exe or .doc.exe commonly used by NJRat dropper components to masquerade as legitimate files.",
+    "logic": "AND",
+    "severity": "high",
+    "detection": [
+      {
+        "field": "EventID",
+        "op": "eq",
+        "value": "11"
+      },
+      {
+        "field": "ED_TargetFilename",
+        "op": "regex",
+        "value": ".*\\.(pdf|doc|docx|xls|txt)\\.exe$"
+      }
+    ]
+}

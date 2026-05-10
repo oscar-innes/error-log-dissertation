@@ -1,33 +1,23 @@
-{ 
-    "rule_title": "TTP 1490 - Backup and Recovery Destruction Commands",
-    "description": "Detects the standard ransomware and destructive malware pre-encryption command set: shadow copy deletion, boot recovery disablement, and backup catalog removal. Consistent across WannaCry, REvil, LockBit, and most ransomware families.",
-    "logic": "OR",
+{
+    "rule_title": "TTP T1490 - Inhibit System Recovery Shadow Copy Deletion",
+    "description": "Detects Event 4688 process creation showing vssadmin or wmic being used to delete shadow copies, a primary WannaCry behaviour to prevent system recovery.",
+    "logic": "AND",
     "severity": "critical",
     "detection": [
       {
-        "detection": [
-          { "field": "EventID", "op": "in", "value": ["4688", "1"] },
-          { "field": "ED_Image", "op": "endswith", "value": "\\vssadmin.exe" },
-          { "field": "ED_CommandLine", "op": "contains", "value": "delete shadows" }
-        ]
+        "field": "EventID",
+        "op": "eq",
+        "value": "4688"
       },
       {
-        "detection": [
-          { "field": "EventID", "op": "in", "value": ["4688", "1"] },
-          { "field": "ED_Image", "op": "endswith", "value": "\\wmic.exe" },
-          { "field": "ED_CommandLine", "op": "contains", "value": "shadowcopy delete" }
-        ]
+        "field": "ED_NewProcessName",
+        "op": "regex",
+        "value": ".*(vssadmin|wmic|wbadmin).*"
       },
       {
-        "detection": [
-          { "field": "EventID", "op": "in", "value": ["4688", "1"] },
-          { "field": "ED_Image", "op": "endswith", "value": "\\bcdedit.exe" },
-          { "field": "ED_CommandLine", "op": "contains_any", "value": [
-              "recoveryenabled no",
-              "bootstatuspolicy ignoreallfailures"
-            ]
-          }
-        ]
+        "field": "ED_CommandLine",
+        "op": "regex",
+        "value": ".*(delete|resize|shadowcopy delete|Delete Shadows|catalog -quiet).*"
       }
     ]
 }

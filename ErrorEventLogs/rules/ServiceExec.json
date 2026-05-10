@@ -1,0 +1,18 @@
+{
+    "rule_title": "TTP T1569.002 - Service Execution",
+    "description": "Detects Event 7045 showing a new service installed with suspicious binary path characteristic of WannaCry service installation behaviour.",
+    "logic": "AND",
+    "severity": "critical",
+    "detection": [
+      {
+        "field": "EventID",
+        "op": "eq",
+        "value": "7045"
+      },
+      {
+        "field": "ED_ServiceFileName",
+        "op": "regex",
+        "value": ".*\\.(exe|dll).*-m security"
+      }
+    ]
+}

@@ -23,7 +23,7 @@ def find_text(text, *tags, nested=None):
     for tag in tags:
         if finder is None:
             return ""
-        finder = finder.find(lambda t: t.name.endswith(tag))
+        finder = finder.find(lambda t: t.name.endswith(tag))  # within an xml value, we want to find the tag that ends with the name of the tag we are looking for, this is because some logs have namespaces in their tags and this allows us to find the correct tag regardless of the namespace.
     
     if finder is None:
         return ""
@@ -32,14 +32,14 @@ def find_text(text, *tags, nested=None):
 
 if __name__ == "__main__":
     setup_msg = "Error Event Log Extraction and Analysis Tool"
-    args = argparse.ArgumentParser(description=setup_msg, formatter_class=argparse.RawTextHelpFormatter)
+    args = argparse.ArgumentParser(description=setup_msg, formatter_class=argparse.RawTextHelpFormatter) # exe with args for subprocess
     args.add_argument('-f', '--file', type=str, required=True, help="Evtx Folder")
     args.add_argument('-o', '--output', type=str, required=True, help="temp storage")
     args = args.parse_args()
     eventlog_space = args.file
 
     rows = []
-    for path, subdirs, files in os.walk(eventlog_space):
+    for path, subdirs, files in os.walk(eventlog_space): # eventlogspace being the temp directory autopsy creates and populates with the evtx files, we walk through that directory to find the evtx files and process them.
         for file in files:
             if not file.endswith('.evtx'):
                 continue
@@ -48,14 +48,14 @@ if __name__ == "__main__":
             log = os.path.splitext(file)[0]
             csv_path = os.path.join(
                 args.output     ,
-                os.path.splitext(file)[0] + ".csv")
+                os.path.splitext(file)[0] + ".csv") #make a new CSV for the data we get from each .evtx file.
             with Evtx(pathing) as logset:  
                 for log_record in logset.records():
                         try:
                             xml = log_record.xml()
-                        except (struct.error, KeyError, UnicodeDecodeError, OverrunBufferException, Exception) as e:
+                        except (struct.error, KeyError, UnicodeDecodeError, OverrunBufferException, Exception) as e:  # lots of error handling needed, didnt have time to fully make a system to carve from corrupted/encrypted logs.
                             continue
-                        soup = BeautifulSoup(xml, "xml")
+                        soup = BeautifulSoup(xml, "xml") # BeautifulSoup is used to parse the XML data from the logs, we use it to find the relevant tags and extract the data we want for our analysis and for feeding into our rules engine. We look for standard tags like EventID, Computer, Provider, Level, Channel, ProcessID, etc. as well as the EventData and UserData sections which can contain a lot of useful information for analysis and detection.
                         rowdata = {
                                 "EventID": find_text(soup, "System", "EventID"),
                                 "Computer": find_text(soup, "System", "Computer"),
@@ -75,7 +75,7 @@ if __name__ == "__main__":
                                 "Execution_ThreadID": find_text(soup, "System", "Execution", nested="ThreadID"),
                                 "EventName": find_text(soup, "System", "EventName") or find_text(soup, "System", "AppName")
                         }
-                        event_data_tag = soup.find("EventData")
+                        event_data_tag = soup.find("EventData") #EventData fields are unique to each individual log and can contain a lot of useful information, we want to extract all of the data fields within EventData and add them to our rowdata with a prefix of "ED_" so we can use them in our rules engine for detection and analysis.
                         if event_data_tag:
                             for data_tag in event_data_tag.find_all("Data"):
                                 name = data_tag.get("Name")
@@ -100,7 +100,7 @@ if __name__ == "__main__":
                         all_keys.append(k)
                         seen.add(k)
             with open(Path(csv_path), "w", newline="", encoding="utf-8") as csv1:
-                writer = csv.DictWriter(csv1, fieldnames=all_keys, extrasaction="ignore")
+                writer = csv.DictWriter(csv1, fieldnames=all_keys, extrasaction="ignore") # write all of whats collected to csv for every row in the original XML event log.
                 writer.writeheader() 
                 for row in rows:
                     writer.writerow(row)

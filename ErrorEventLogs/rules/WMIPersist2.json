@@ -1,0 +1,18 @@
+{
+    "rule_title": "TTP T1546.003 - WMI Persistence Suspicious Consumer Command",
+    "description": "Detects Sysmon Event 20 WMI Event Consumer where the consumer executes a suspicious command line or script indicative of malicious WMI persistence as used by NJRat.",
+    "logic": "AND",
+    "severity": "critical",
+    "detection": [
+      {
+        "field": "EventID",
+        "op": "eq",
+        "value": "20"
+      },
+      {
+        "field": "ED_Destination",
+        "op": "regex",
+        "value": ".*(cmd\\.exe|powershell|wscript|cscript|mshta|rundll32).*"
+      }
+    ]
+}

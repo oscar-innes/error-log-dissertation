@@ -1,0 +1,18 @@
+{
+    "rule_title": "TTP T1014 - Unsigned Driver Load Rootkit Indicator",
+    "description": "Detects Sysmon Event 6 driver loaded where the driver is unsigned or has an invalid signature, indicative of rootkit or kernel level malware loading a malicious driver as seen in WannaCry.",
+    "logic": "AND",
+    "severity": "critical",
+    "detection": [
+      {
+        "field": "EventID",
+        "op": "eq",
+        "value": "6"
+      },
+      {
+        "field": "ED_SignatureStatus",
+        "op": "regex",
+        "value": ".*(unavailable|expired|revoked).*"
+      }
+    ]
+}

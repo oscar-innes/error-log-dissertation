@@ -1,0 +1,13 @@
+{
+    "rule_title": "TTP T1055 - Process Injection via Remote Thread Creation",
+    "description": "Detects Sysmon Event 8 CreateRemoteThread where a process creates a thread in another process memory space, a primary indicator of process injection used by both NJRat and WannaCry.",
+    "logic": "AND",
+    "severity": "critical",
+    "detection": [
+      {
+        "field": "EventID",
+        "op": "eq",
+        "value": "8"
+      }
+    ]
+}

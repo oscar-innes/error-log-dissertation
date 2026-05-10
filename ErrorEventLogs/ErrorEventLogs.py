@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-#type: ignore
+#type:ignore
 import jarray
 import re
 from java.io import File, FileOutputStream
@@ -23,7 +23,7 @@ from java.lang import ProcessBuilder
 import io
 from java.io import File
 from org.sleuthkit.autopsy.casemodule.services import Blackboard
-from org.sleuthkit.datamodel import BlackboardAttribute
+from org.sleuthkit.datamodel import BlackboardAttribute  # lot of autopsy imports
 from org.sleuthkit.autopsy.ingest import IngestModule
 from org.sleuthkit.autopsy.ingest.IngestModule import IngestModuleException
 from org.sleuthkit.autopsy.ingest import DataSourceIngestModule
@@ -79,7 +79,7 @@ from collections import defaultdict
 
 def clean_float(val):
     try:
-        if isinstance(val, str) and val.startswith('0x'):
+        if isinstance(val, str) and val.startswith('0x'):  # some log values are in hex, we convert them to decimal for easier analysis and comparison in rules.
             return float(int(val, 16))
         return float(val)
     except (ValueError, TypeError):
@@ -92,20 +92,20 @@ Operations = {
     "regex":    lambda a, b: bool(re.search(b, str(a), re.I)),
     "in":       lambda found, count: str(found) in [str(x) for x in count],
     "not_in":       lambda found, count: str(found) not in [str(x) for x in count],
-    "contains_any": lambda a, b: any(str(x).lower() in str(a).lower() for x in b),
+    "contains_any": lambda a, b: any(str(x).lower() in str(a).lower() for x in b),  # Operations for JSON rules
 }
 
 def get_unix_time(timing):
     try:
         timing = timing.strip().strip("'\"")
         if '+' in timing:
-            timing = timing[:timing.index('+')]
+            timing = timing[:timing.index('+')]  #Processing and sorting timestamps for logs, quick way that I did this
         if timing.endswith('Z'):
             timing = timing[:-1]
         
         timing = timing.strip()
         
-        for fmt in ("%Y-%m-%d %H:%M:%S.%f", "%Y-%m-%d %H:%M:%S"):
+        for fmt in ("%Y-%m-%d %H:%M:%S.%f", "%Y-%m-%d %H:%M:%S"):  #Remove some noensense from Windows timestamps.
             try:
                 dated = datetime.strptime(timing, fmt)
                 return (dated - datetime(1970, 1, 1)).total_seconds()
@@ -118,15 +118,15 @@ def get_unix_time(timing):
     
 def load_json_rules(module_dir):
     rules_list = []
-    rules_path = os.path.join(module_dir, "rules")
+    rule_set = os.path.join(module_dir, "rules")
     
-    if not os.path.exists(rules_path):
-        os.makedirs(rules_path)
+    if not os.path.exists(rule_set):
+        os.makedirs(rule_set)
         return rules_list
 
-    for filename in os.listdir(rules_path):
+    for filename in os.listdir(rule_set):
         if filename.endswith(".json"):
-            file_full_path = os.path.join(rules_path, filename)
+            file_full_path = os.path.join(rule_set, filename)
             try:
                 with open(file_full_path, 'r') as f:
                     rule_data = json.load(f)
@@ -143,7 +143,7 @@ def load_json_rules(module_dir):
 def clean_str(val):
     if val is None:
         return ""
-    if isinstance(val, unicode):
+    if isinstance(val, unicode): # in Python 2, strings read from files may be unicode, so we decode them to UTF-8 for consistency. In Python 3, all strings are unicode by default, so we can skip decoding.
         u = val
     else:
         u = val.decode("utf-8", errors="replace")
@@ -155,8 +155,7 @@ def evaluate_condition(block, row):
     if "logic" in block:
         logic_type = block.get("logic", "AND").upper()
         detections = block.get("detection", [])
-        results = [evaluate_condition(child, row) for child in detections]
-        
+        results = [evaluate_condition(value, row) for value in detections]  #check condition of each rule against an operation to decide to do with key-value JSON pair.
         if logic_type == "OR":
             return any(results)
         else:
@@ -178,7 +177,7 @@ def evaluate_condition(block, row):
             
     return False
 
-class ErrorFactory(IngestModuleFactoryAdapter):
+class ErrorFactory(IngestModuleFactoryAdapter):  #building outline of a module autopsy
     moduleName = "Autopsy EVTX analyser"
 
     def getModuleDisplayName(self):
@@ -202,7 +201,7 @@ class Error_log_collection(DataSourceIngestModule):
     _logger = Logger.getLogger(ErrorFactory.moduleName)
 
     def log(self, level, msg):
-        self._logger.logp(level, self.__class__.__name__, inspect.stack()[1][3], str(msg))
+        self._logger.logp(level, self.__class__.__name__, inspect.stack()[1][3], str(msg))  #logging setup
 
     def __init__(self):
         self.context = None
@@ -216,11 +215,11 @@ class Error_log_collection(DataSourceIngestModule):
         self.log(Level.INFO, "Starting datasource processing")
         progressBar.switchToIndeterminate()
 
-        if PlatformUtil.isWindowsOS():
+        if PlatformUtil.isWindowsOS():  #Is the case Windows logs? If not, skip the module.
             progressBar.switchToDeterminate(4)
             files = []
             fileobserver = Case.getCurrentCase().getServices().getFileManager()
-            files = fileobserver.findFiles(dataSource, "%.evtx")
+            files = fileobserver.findFiles(dataSource, "%.evtx") #find all evtx across disk image, even in non standard directories for them
             board = Case.getCurrentCase().getSleuthkitCase().getBlackboard()
             try:
                 evtx_detail = board.getOrAddArtifactType(
@@ -251,7 +250,7 @@ class Error_log_collection(DataSourceIngestModule):
             fileobserver = Case.getCurrentCase().getServices().getFileManager()
             fileset = fileobserver.findFiles(dataSource, "%.evtx")
             self.log(Level.INFO, "found Event Log log files")
-            temp_csv = Case.getCurrentCase().getTempDirectory()
+            temp_csv = Case.getCurrentCase().getTempDirectory()  #Get the temp directory of the case -> this is where stuff will be sent to for analysis
             temp_work = os.path.join(temp_csv, "FullErrorLogs")
             try: os.makedirs(temp_work)
             except: self.log(Level.INFO, "Event Log temporary directory exists already on this case" + temp_work)
@@ -260,58 +259,59 @@ class Error_log_collection(DataSourceIngestModule):
                     self.log(Level.SEVERE, "EVTX extraction failed: " + temp_work)
                     raise
                 if self.context.isJobCancelled(): return IngestModule.ProcessResult.OK
-                outer = os.path.join(temp_work, f.getName())
+                outer = os.path.join(temp_work, f.getName())  # write event log content to CSVs in temp dir
                 ContentUtils.writeToFile(f, File(outer))
-            exe_path = os.path.join(os.path.dirname(__file__), "Conversion.exe")
-            exit_code = subprocess.call([exe_path, "-f", str(temp_work), "-o", str(temp_work)])
+            exe_path = os.path.join(os.path.dirname(__file__), "Conversion.exe") #workaround .exe
+            subprocess.call([exe_path, "-f", str(temp_work), "-o", str(temp_work)])  # have to call a subprocess, evtx parsing requires python 3.0+ and autopsy's Jython is 2.7, so I made a separate script to do the conversion and call it from here, this is where the conversion.py file comes into play, it takes the evtx files, converts them to csv and adds some extra parsing and data extraction for the rules engine to use.
             progressBar.progress(2)
             module_dir = os.path.dirname(os.path.abspath(__file__))
             self.log(Level.INFO, "Loading JSON rules...")
             my_rules = load_json_rules(module_dir)
-            self.log(Level.INFO, "Loaded {} rules.".format(len(my_rules)))
+            self.log(Level.INFO, "Loaded {} rules.".format(len(my_rules)))  #now we have csvs load the rules
             for item in os.listdir(temp_work):
-                if not item.endswith(".csv"):
+                if not item.endswith(".csv"): # we dont want to deal with original log files again.
                     self.log(Level.INFO, "skipping non-key log file: " + item)
                     continue
                 if item.endswith(".csv"):
                     self.log(Level.INFO, "found a csv!")
                     file_path = os.path.join(temp_work, item)
                     all_rows = list(csv.DictReader(open(str(file_path))))
-                    all_rows.sort(key=lambda x: get_unix_time(x.get("TimeCreated_SystemTime", "0")))
+                    all_rows.sort(key=lambda x: get_unix_time(x.get("TimeCreated_SystemTime", "0")))  #Sort by timestamp, this is needed to ensure temporal event tracking works.
                     temporal_matches = defaultdict(list)
                     Sequential = {}  
                     for row in all_rows:
-                        row_time = get_unix_time(row.get("TimeCreated_SystemTime", ""))
+                        row_time = get_unix_time(row.get("TimeCreated_SystemTime", ""))  
                         for rule in my_rules:
-                            ruler = rule.get('rule_title', 'Unknown Rule')
-                            if evaluate_condition(rule, row):
+                            ruler = rule.get('rule_title', 'Unknown Rule') # for every rule does this log line meet it?
+                            if evaluate_condition(rule, row):  #What do we look for and how?
                                 window_secs = rule.get('window_seconds')
                                 required_count = rule.get('threshold')
                                 sequence = rule.get('steps')
                                 severity = rule.get('severity')
                                 if window_secs and required_count and not sequence:
           
-                                    temporal_matches[ruler].append(float(row_time))
+                                    temporal_matches[ruler].append(float(row_time))    # If the rule has a temporal component, we add the timestamp to a list of matches for that rule. We then check if the number of matches within the specified window meets the threshold for creating an artifact. 
+                                    #This allows us to identify patterns of events that occur within a certain time frame, which can be indicative of specific TTPs or attack behaviors.
                                     self.log(Level.INFO, "appending: " + str(row_time) + " type: " + str(type(row_time)))
 
                                     temporal_matches[ruler].sort()
                                     temporal_matches[ruler] = [
-                                        t for t in temporal_matches[ruler]
+                                        t for t in temporal_matches[ruler]  #Remove old timestamps outside the window, this allows us to track events that happen within a certain time of each other, even if they don't all happen at once.
                                         if (t - temporal_matches[ruler][0]) <= window_secs
                                     ]
                                     
-                                        # now test ona  bruteforce, mail the log in?
+                                       
                                     if len(temporal_matches[ruler]) >= required_count:
                                         newfact2 = dataSource.newArtifact(evtx_detail.getTypeID())
                                         self.log(Level.INFO, "cluster before convert: " + str(temporal_matches[ruler]))
                                         count = len(temporal_matches[ruler])
-                                        epoch = datetime(1970, 1, 1)
+                                        epoch = datetime(1970, 1, 1)  # time in python is weird had to make this move a bit.
                                         first = (epoch + timedelta(seconds=temporal_matches[ruler][0])).strftime("%Y-%m-%d %H:%M:%S")
                                         last = (epoch + timedelta(seconds=temporal_matches[ruler][-1])).strftime("%Y-%m-%d %H:%M:%S")
-                                        time_summary = "\n[!] THRESHOLD MET\nTotal Occurrences: {}\nWindow: {}s\nFirst Seen: {}\nLast Seen: {}".format(
+                                        time_summary = "\n[!] TEMPORAL THRESHOLD MET\nTotal Occurrences: {}\nWindow: {}s\nFirst Seen: {}\nLast Seen: {}".format(
                                             count, window_secs, first, last
                                         )
-            
+                                        # if we've got a hit, post it.
                                         newfact2.addAttribute(BlackboardAttribute(atr_ttp, Error_log_collection.moduleName, str(ruler)))
                                         newfact2.addAttribute(BlackboardAttribute(atr_indication, Error_log_collection.moduleName, rule.get('description', "") + time_summary))
             
@@ -326,9 +326,9 @@ class Error_log_collection(DataSourceIngestModule):
             
                                             if severity == "critical" or severity == "high":
                                                 important = BlackboardAttribute(
-                                                    BlackboardAttribute.ATTRIBUTE_TYPE.TSK_SCORE.getTypeID(),
+                                                    BlackboardAttribute.ATTRIBUTE_TYPE.TSK_COMMENT.getTypeID(),
                                                     Error_log_collection.moduleName,
-                                                    "SEVERITY: " + severity.upper()
+                                                    "SEVERITY: " + severity.upper()  # severity rating.
                                                 )
                                                 newfact2.addAttribute(important)
                                             board.postArtifact(newfact2, Error_log_collection.moduleName)
@@ -336,7 +336,7 @@ class Error_log_collection(DataSourceIngestModule):
                                             temporal_matches[ruler] = [last_time]
                                         else:
                                             continue
-                                elif sequence and window_secs and required_count:
+                                elif sequence and window_secs and required_count: # if the rule has a sequence component, we track the progress of that sequence in a dictionary. Each step of the sequence is checked against the current log entry, and if it matches, we record the time and details of that step. We then check if the required steps of the sequence have been completed within the specified time window, and if so, we create an artifact with the details of the matched sequence. This allows us to identify complex patterns of events that occur in a specific order within a certain time frame, which can be indicative of multi-stage attack behaviors or TTPs.
                                     self.log(Level.INFO, "This rule is being checked correctly")
                                     if ruler not in Sequential:
                                         Sequential[ruler] = {}
@@ -345,12 +345,12 @@ class Error_log_collection(DataSourceIngestModule):
                                         step_results = []
                                         for c in step['detection']:
                                             actual = row.get(c['field'], "")
-                                            handler = Operations.get(c['op'])
+                                            handler = Operations.get(c['op'])  # use operation to determine hits across the different sequence steps
                                             if handler:
                                                 step_results.append(handler(actual, c['value']))
                                         if step_results and all(step_results):
                                             Sequential[ruler][step_num] = {
-                                                'time': float(row_time),
+                                                'time': float(row_time),  # calculate what row was hit when.
                                                 'row': dict(row)
                                             }
                                             self.log(Level.INFO, "Sequence checker hits break instruction.")
@@ -366,7 +366,7 @@ class Error_log_collection(DataSourceIngestModule):
                                         required = set(s['step'] for s in sequence)
                                         found = set(Sequential[ruler].keys())
                                         if required.issubset(found):
-                                            newfact3 = dataSource.newArtifact(evtx_detail.getTypeID())
+                                            newfact3 = dataSource.newArtifact(evtx_detail.getTypeID())  # make a new artifact object to publish
                                             epoch = datetime(1970, 1, 1)
                                             entries = sorted(Sequential[ruler].items())
 
@@ -385,7 +385,7 @@ class Error_log_collection(DataSourceIngestModule):
                                                     atr_ttp, Error_log_collection.moduleName, str(ruler)
                                                 ))
                                                 newfact3.addAttribute(BlackboardAttribute(
-                                                    atr_indication, Error_log_collection.moduleName,
+                                                    atr_indication, Error_log_collection.moduleName,  # add to the blackboard attributes for the artifact, including the rule description and details of the sequence match.
                                                     rule.get('description', '') + chain_note
                                                 ))
                                                 for col_name, col_val in entry['row'].items():
@@ -404,17 +404,17 @@ class Error_log_collection(DataSourceIngestModule):
                                                     ))
                                                 if severity == "critical" or severity == "high":
                                                     important = BlackboardAttribute(
-                                                        BlackboardAttribute.ATTRIBUTE_TYPE.TSK_SCORE.getTypeID(),
+                                                        BlackboardAttribute.ATTRIBUTE_TYPE.TSK_COMMENT.getTypeID(),
                                                         Error_log_collection.moduleName,
                                                         "SEVERITY: " + severity.upper()
                                                         )
                                                     newfact3.addAttribute(important)
                                                 board.postArtifact(newfact3, Error_log_collection.moduleName)
                                                 Sequential[ruler] = {}  
-                                else:
+                                else: # if a standard standalone matching rule, we just create an artifact for that single log entry with the details of the match and the rule.
                                     newfact2 = dataSource.newArtifact(evtx_detail.getTypeID())
                                     newfact2.addAttribute(BlackboardAttribute(atr_ttp, Error_log_collection.moduleName, rule.get('rule_title', "")))
-                                    newfact2.addAttribute(BlackboardAttribute(atr_indication, Error_log_collection.moduleName, rule.get('description', "")))
+                                    newfact2.addAttribute(BlackboardAttribute(atr_indication, Error_log_collection.moduleName, rule.get('description', "")))  # what rule was hit and what was context - important for triage and understanding the finding.
                                     for col_name, col_val in row.items():
                                         if col_val:
                                             if isinstance(col_val, unicode):
@@ -424,7 +424,7 @@ class Error_log_collection(DataSourceIngestModule):
                                             newfact2.addAttribute(BlackboardAttribute(attr_type, Error_log_collection.moduleName, str(col_val)))
                                     if severity == "critical" or severity == "high":
                                         important = BlackboardAttribute(
-                                            BlackboardAttribute.ATTRIBUTE_TYPE.TSK_SCORE.getTypeID(),
+                                            BlackboardAttribute.ATTRIBUTE_TYPE.TSK_COMMENT.getTypeID(),
                                             Error_log_collection.moduleName,
                                             "SEVERITY: " + severity.upper()
                                         )
@@ -435,7 +435,7 @@ class Error_log_collection(DataSourceIngestModule):
                     self.log(Level.INFO, "badfinding, not a csv file")
                     continue
             temporal_windows = []
-            progressBar.progress(4)
+            progressBar.progress(4) # progressbar tracks progress of the modules works for user experience.
             IngestServices.getInstance().postMessage(IngestMessage.createMessage(IngestMessage.MessageType.DATA, "Error_log_collection", "Error logs collected successfully" ))
         else:
            self.log(Level.WARNING, "Case is NOT windows logs")
